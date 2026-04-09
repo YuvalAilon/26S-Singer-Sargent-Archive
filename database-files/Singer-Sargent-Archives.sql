@@ -68,7 +68,6 @@ CREATE TABLE Donors(
 
     street varchar(30),
     city varchar(30),
-    state varchar(2),
     zip varchar(10)
 );
 
