@@ -36,23 +36,24 @@ CREATE TABLE MuseumBranch(
 );
 
 CREATE TABLE Galleries(
-    galleryID int PRIMARY KEY,
+    galleryID int,
     branchID int NOT NULL,
-    isInUse boolean,
     name varchar(50),
     wing varchar(50),
     artworkCapacity int,
+    PRIMARY KEY (galleryID, branchID),
     FOREIGN KEY (branchID) REFERENCES MuseumBranch (branchID)
 );
 
 CREATE TABLE Exhibits(
     exhibitID int PRIMARY KEY,
     galleryID int NOT NULL,
+    branchID int NOT NULL,
     name varchar(50),
     description text,
     dateStart DATETIME NOT NULL,
     dateEnd DATETIME,
-    FOREIGN KEY (galleryID) REFERENCES Galleries (galleryID)
+    FOREIGN KEY (galleryID, branchID) REFERENCES Galleries (galleryID, branchID)
 );
 
 CREATE TABLE Donors(
