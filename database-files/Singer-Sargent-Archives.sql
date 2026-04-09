@@ -15,7 +15,7 @@ CREATE TABLE MuseumWorker(
     middleName varchar(50),
     lastName varchar(50),
     email varchar(50),
-    phone varchar(15),
+    phone varchar(20),
     roleID int,
     FOREIGN KEY (roleID) REFERENCES Roles (roleID)
 );
@@ -24,14 +24,15 @@ CREATE TABLE MuseumBranch(
     branchID int PRIMARY KEY,
     branchName varchar(50),
 
-    contactName varchar(50),
-    contactPhone varchar(15),
+    contactFirstName varchar(50),
+    contactMiddleName varchar(50),
+    contactLastName varchar(50),
+    contactPhone varchar(20),
     contactEmail varchar(50),
 
-    street varchar(30),
+    street varchar(50),
     city varchar(30),
-    state varchar(2),
-    zip varchar(6)
+    zip varchar(15)
 );
 
 CREATE TABLE Galleries(
@@ -90,7 +91,7 @@ CREATE TABLE ExpansionProject(
     status ENUM('pending', 'approved', 'denied', 'ongoing') NOT NULL,
     costDollarAmount int,
     contactName varchar(50),
-    contactPhone varchar(15),
+    contactphone varchar(20),
     contactEmail varchar(50),
 
     FOREIGN KEY (headedByBranchID) REFERENCES MuseumBranch (branchID)

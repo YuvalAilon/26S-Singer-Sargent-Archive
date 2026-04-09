@@ -47,4 +47,16 @@ VALUES (3324, 'Veronica-Elizabeth', NULL, 'Hawthorne', 'v.hawthorne@metmuseum.or
 	(3360, 'Mohammad', 'Birger', 'Schleich', 'mohammad.schleic.birger@metmuseum.org', '07796 132846', 1),
 	(3361, 'Notburga', NULL, 'Lindner', 'lindner@metmuseum.org', '(01291) 63279', 1);
 
-
+INSERT INTO MuseumBranch
+VALUES (432110, 'The Metropolitan Museum of Art', 'Whitney', NULL, 'Tannhauser', '(443)-183-0293', 'tannhauser.whitney@gmail.com','1000 5th Ave', 'New York', '10028'),
+    (482743, 'The Museum of Fine Art', 'Pierre', 'Valjean', 'Terjanian', '(938)-338-0119', 'p.terjanian@outlook.com','465 Huntington Ave', 'Boston', '02115'),
+    (443755, 'The Lesley James Art Museum', 'Deborah', NULL, 'Martin', '(0114) 496 0020', 'deb.martin@outlook.com', '418 Mathew River', 'West Frances', 'ME4 2TN'),
+    (492860, 'The Dr Adam Ryan Galleries', 'Nicola', 'Charlene', 'Wall', '+442074960906', 'charlen.nicola.wa@hotmail.com', 'Flat 59S Guy Valley', 'Johnsonmouth', 'M7 5UL'),
+    (481322, 'The Rita Allen Museum of Fine Art', 'Christopher', NULL, 'Martin', '(028)9018289', 'christopher.mart@gmail.com', '46 Catherine Row', 'West Alan', 'G60 2AF'),
+    (480244, 'The Mr Brian Knight Museum of Fine Art', 'Barry', NULL, 'Black', '01632 960757', 'bl.bar877@gmail.com', '96 Sylvia Valleys', 'Port Francisland', 'B4 8GF'),
+    (411616, 'The East Lorrainefort Galleries', 'Terence', 'Malcolm', 'Henderson', '+4420 74960079', 'malco.terence@outlook.com', '81 Clifford Village', 'East Lorrainefort', 'CA1P 2WL'),
+    (400024, 'The New Russell Museum of Fine Art', 'Jasmine', NULL, 'Smith', '+441154960299', 'smith.jas@hotmail.co.uk', 'Flat 62h Green Station', 'New Russell', 'E4 3XQ'),
+    (404681, 'The North Leonmouth Art Museum', 'Rachel', 'Abbie', 'Johnson', '+44(0)289018066', 'abbie.johnson.rachel@yahoo.co.uk', '42 Lawrence Trafficway', 'North Leonmouth', 'E7K 0HG'),
+    (484166, 'The North Colinburgh Art Museum', 'Benjamin', 'Alex', 'Taylor', '+44(0)151 4960421', 'benjamin.al.tayl@hotmail.com', '67 Cooper Land', 'North Colinburgh', 'W5 0JJ'),
+    (474015, 'South Lynnebury''s Collection', 'Heather', NULL, 'Dyer', '+44(0)289018088', 'heather.dyer489@yahoo.co.uk', '31 Dean Oval', 'South Lynnebury', 'SA1P 1BQ'),
+    (422135, 'The Dr Abigail Mann Institute for the Arts', 'Michelle', NULL, 'Warner', '+44(0)8081570703', 'mich@hotmail.com', 'Studio 53m Hughes Flats', 'Evansland', 'LE49 7TX');
