@@ -1,0 +1,41 @@
+USE `Singer-Sargent-Archive`;
+
+INSERT INTO Roles
+VALUES (1, 'Archivist'),
+       (2, 'Curator'),
+       (3, 'Director');
+
+INSERT INTO MuseumWorker
+VALUES (3324, 'Veronica-Elizabeth', NULL, 'Hawthorne', 'v.hawthorne@metmuseum.org', '(934)-333-2984', 1),
+    (3326, 'Watney', 'Alex', 'Busch', 'w.busch@metmuseum.org', '(847)-049-1192', 2),
+    (3327, 'Marshal', NULL, 'Jacobson', 'm.jacobson@metmuseum.org', '(209)-849-2811', 3),
+    (3328, 'Uwe', 'Stephen', 'Barth', 'uwe.ba.stephen954@metmuseum.org', '+49 (0) 1921 846174', 2),
+	(3329, 'Erdal', NULL, 'Trapp', 'tr.erdal955@metmuseum.org', '(05185) 80754', 1),
+	(3330, 'Steve', 'Lothar', 'Hendriks', 'steve.loth376@metmuseum.org', '(06994) 10451', 1),
+	(3331, 'Zenta', NULL, 'Oderwald', 'oder.ze@metmuseum.org', '03084 36939', 2),
+	(3332, 'Adam', NULL, 'Rosenow', 'adam.ros@metmuseum.org', '(05403) 731986', 1),
+	(3333, 'Traute', 'Nelli', 'Martin', 'martin.traut.nell@metmuseum.org', '03647322750', 3),
+	(3334, 'Gesine', NULL, 'Trub', 'gesine@metmuseum.org', '+49 (0) 1085 612451', 3),
+	(3335, 'Ole', NULL, 'Barkholz', 'barkholz.o648@metmuseum.org', '(03186) 04074', 3),
+	(3336, 'Hans-Günther', NULL, 'Zirme', 'hans-günther.zirme551@metmuseum.org', '+49(0)5477 196444', 1),
+	(3337, 'Janin', NULL, 'Hofmann', 'hofman@metmuseum.org', '(04534) 798646', 1),
+	(3338, 'Herbert', 'Veit', 'Baum', 'herbert.veit.baum@metmuseum.org', '+49 (0) 2635 594544', 2),
+	(3339, 'Ottilie', 'Nathalie', 'Reichmann', 'reichmann.nath.ottilie@metmuseum.org', '+49(0) 546034258', 1),
+	(3340, 'Hans-Ludwig', 'Claus', 'Jopich', 'jopi.claus.hans-ludwig130@metmuseum.org', '(00109) 457981', 2),
+	(3341, 'Igor', NULL, 'Ackermann', 'igo.acke@metmuseum.org', '02614850503', 1),
+	(3342, 'Andrew', 'Walter', 'Rose', 'walter.andrew.rose@metmuseum.org', '(09515) 883808', 2),
+	(3343, 'Sabri', 'Vladimir', 'Mans', 'sabri.vladimir.man@metmuseum.org', '+49(0)9249619995', 1),
+	(3344, 'Nicolaus', 'Gabor', 'Römer', 'rö.ga.nicola766@metmuseum.org', '(06200) 00081', 3),
+	(3345, 'Julie', NULL, 'Wagner', 'jul.wagner@metmuseum.org', '0962845428', 1),
+	(3346, 'Woldemar', 'Ingolf', 'Eigenwillig', 'woldemar.ingol.eigenwill@metmuseum.org', '0025155385', 2),
+	(3347, 'Josephine', NULL, 'Peukert', 'peuker@metmuseum.org', '+49(0)5507 02515', 1),
+	(3348, 'Sylke', NULL, 'Gotthard', 'sy.gotthard771@metmuseum.org', '+49(0) 688006391', 2),
+	(3349, 'Rosel', NULL, 'Ditschlerin', 'ditschlerin.ros@metmuseum.org', '05992 45680', 3),
+	(3350, 'Anneke', 'Janine', 'Stroh', 'anneke.jani.str798@metmuseum.org', '+49(0)7762177114', 1),
+	(3351, 'Meinrad', NULL, 'Kobelt', 'kobel@metmuseum.org', '+49(0)7769 63398', 2),
+	(3352, 'Sylwia', NULL, 'Schenk', 'sche.sylwia439@metmuseum.org', '08412535934', 3),
+	(3353, 'Jasmina', NULL, 'Nerger', 'jasmin.nerge@metmuseum.org', '+49(0)2165 325189', 3),
+	(3354, 'Cengiz', 'Friedo', 'Beckmann', 'cengiz.friedo.beckman@metmuseum.org', '(05736) 94389', 1),
+	(3355, 'Mathias', 'Ahmet', 'Wulf', 'ahmet.wu63@metmuseum.org', '06477 32328', 1),
+	(3356, 'Philipp', 'Immo', 'Gnatz', 'gnatz.imm.philipp@metmuseum.org', '0380333189', 2),
+	(3357, 'Lea', NULL, 'Mülichen', 'mülichen.lea@metmuseum.org', '00638  61609', 2);
