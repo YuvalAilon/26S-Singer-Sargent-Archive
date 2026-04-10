@@ -116,6 +116,31 @@ VALUES (324, 432110, 'The Maria V. Hyacinth Gallery', 'The American Wing', 40),
 	(392, 422135, 'The Nicholas & Conor Horton Gallery', 'The Maurice White-Glover Wing', 66),
 	(707, 422135, 'The Bradley Nicholson Gallery', 'The Maurice White-Glover Wing', 75);
 
+INSERT INTO Exhibits
+VALUES (823, 992, 482743, 'Portraits of Sargent', 'The MFA''s treasured collection of Sargent Portraits. We hold the world''s most complete collection of Sargent''s works, including some of his most famous!','1973-01-22', NULL),
+    (293, 324, 432110, 'Curator Highlight: Watney Busch','Our museum''s head curator, Watney Busch, has prepared an exhibit with their favourite pieces for your viewing pleasure','2025-05-01', '2026-05-01'),
+    (703, 766, 422135, 'Leonardo da Vinci and Their Works', 'Leonardo di ser Piero da Vinci was an Italian poly...', '2027-3-14', '2032-10-15'),
+	(705, 804, 482743, 'Vincent van Gogh and Their Works', 'Vincent Willem van Gogh was a Dutch Post-Impressio...', '2031-11-20', '2036-8-13'),
+	(707, 584, 481322, 'Pablo Picasso and Their Works', 'Pablo Ruiz Picasso was a Spanish painter, sculptor...', '2031-2-19', '2032-12-19'),
+	(709, 879, 484166, 'Claude Monet: Biography Through Art', 'Oscar-Claude Monet was a French painter and founde...', '2029-11-17', NULL),
+	(711, 660, 411616, 'Michelangelo Buonarroti: A Review', 'Michelangelo di Lodovico Buonarroti Simoni, known ...', '2027-10-13', '2028-8-24'),
+	(713, 177, 432110, 'Rembrandt van Rijn and Their Works', 'Rembrandt Harmenszoon van Rijn was a Dutch Golden ...', '2031-3-12', '2034-9-9'),
+	(715, 605, 474015, 'Johannes Vermeer: Biography Through Art', 'Johannes Vermeer was a Dutch painter who specializ...', '2029-9-15', NULL),
+	(717, 359, 484166, 'Salvador Dalí: A Review', 'Salvador Domingo Felipe Jacinto Dalí i Domènech, M...', '2030-5-18', '2033-10-13'),
+	(719, 216, 482743, 'The Frida Kahlo Collection', 'Magdalena Carmen Frida Kahlo y Calderón was a Mexi...', '2030-6-4', '2031-2-2'),
+	(721, 986, 432110, 'A selection of Andy Warhols', 'Andy Warhol was an American artist and filmmaker. ...', '2027-1-28', '2030-1-12'),
+	(723, 403, 400024, 'Georgia O''Keeffe: A Review', 'Georgia Totto O''Keeffe was an American modernist ...', '2030-2-12', NULL),
+	(725, 419, 432110, 'A selection of Gustav Klimts', 'Gustav Klimt was an Austrian symbolist painter and...', '2027-11-9', '2029-11-27'),
+	(727, 716, 411616, 'Edvard Munch: A Review', 'Edvard Munch was a Norwegian painter. His 1893 wor...', '2031-11-4', NULL),
+	(729, 874, 404681, 'A selection of Henri Matisses', 'Henri Émile Benoît Matisse was a French visual art...', '2031-7-9', NULL),
+	(731, 323, 482743, 'Best of Jackson Pollock', 'Paul Jackson Pollock was an American painter. A ma...', '2029-5-28', NULL),
+	(733, 707, 422135, 'Auguste Rodin: Biography Through Art', 'François Auguste René Rodin was a French sculptor ...', '2029-12-3', '2033-5-9'),
+	(735, 535, 492860, 'Artemisia Gentileschi and Their Works', 'Artemisia Lomi Gentileschi was an Italian Baroque ...', '2031-12-20', NULL),
+	(737, 474, 480244, 'The Katsushika Hokusai Collection', 'Katsushika Hokusai  was a Japanese ukiyo-e artist ...', '2029-10-3', '2033-4-12'),
+	(739, 576, 482743, 'Pierre-Auguste Renoir: Biography Through Art', 'Pierre-Auguste Renoir was a French artist who was ...', '2028-10-9', '2031-8-10'),
+	(741, 198, 484166, 'John Singer Sargent: A Review', 'John Singer Sargent was an American expatriate art...', '2030-11-14', '2034-9-25'),
+	(743, 822, 484166, 'Best of Thomas Cole', 'Thomas Cole was an Anglo-American artist who found...', '2027-9-10', '2032-3-17');
+
 INSERT INTO Donors
 VALUES (449381, 'The Elizabeth Bennet Foundation for the Arts', 'jane.au@EBFA.org','Ms', 'Jane', NULL, 'Austen','Winchester Rd', 'Chawton', 'GU34 1SD'),
     (938292, 'Blue Hill Conservation Society', 'hu.eric@BHCS.org','Dr', 'Eric', 'John', 'Hu','34 Warren St.', 'Chicago', '60606'),
