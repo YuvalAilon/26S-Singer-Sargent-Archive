@@ -90,8 +90,10 @@ CREATE TABLE ExpansionProject(
     description text,
     status ENUM('pending', 'approved', 'denied', 'ongoing') NOT NULL,
     costDollarAmount int,
-    contactName varchar(50),
-    contactphone varchar(20),
+    contactFirstName varchar(50),
+    contactMiddleName varchar(50),
+    contactLastName varchar(50),
+    contactPhone varchar(20),
     contactEmail varchar(50),
 
     FOREIGN KEY (headedByBranchID) REFERENCES MuseumBranch (branchID)
