@@ -197,3 +197,28 @@ VALUES (349, 'Leonardo', 'di ser Piero', 'da Vinci', 'Leonardo di ser Piero da V
 	(367, 'Pierre-Auguste', NULL, 'Renoir', 'Pierre-Auguste Renoir was a French artist who was a leading painter in the development of the Impressionist style. It has been said that, as a celebrator of beauty and especially feminine sensuality, "Renoir is the final representative of a tradition which runs directly from Rubens to Watteau."'),
 	(368, 'John', 'Singer', 'Sargent', 'John Singer Sargent was an American expatriate artist, considered the "leading portrait painter of his generation" for his evocations of Belle Époque and Edwardian-era luxury. He created roughly 900 oil paintings and more than 2,000 watercolors, as well as countless sketches and charcoal drawings. His oeuvre documents worldwide travel, from Venice to the Tyrol, Corfu, Capri, Spain, the Middle East, Montana, Maine, and Florida.'),
 	(369, 'Thomas', NULL, 'Cole', 'Thomas Cole was an Anglo-American artist who founded the Hudson River School art movement. He painted romantic landscapes and history paintings. Influenced by European painters, but with a strong American sensibility, he was prolific throughout his career and worked primarily with oil on canvas. His paintings are typically allegoric and often depict small figures or structures set against moody and evocative natural landscapes. They are usually escapist, framing the New World as a natural eden contrasting with the smog-filled cityscapes of Industrial Revolution-era Britain, in which he grew up. His works, often seen as conservative, criticize the contemporary trends of industrialism, urbanism, and westward expansion.');
+
+INSERT INTO ArtifactSet
+VALUES (877, 'Daughters of Edward Darley Boit & Vases', 'One of Sargent''s most compositionally interesting works, and the vases it features'),
+        (882, 'Marilyn Diptychs', 'The museum''s entire collection of Marilyn Diptychs (currently 0, but a girl can dream (The girl is me, Victoria-Elizabeth))'),
+        (349, 'Leonardo da Vinci', 'A collection of Leonardo da Vinci''s work'),
+        (350, 'Vincent van Gogh', 'A collection of Vincent van Gogh''s work'),
+        (351, 'Pablo Picasso', 'A collection of Pablo Picasso''s work'),
+        (352, 'Claude Monet', 'A collection of Claude Monet''s work'),
+        (353, 'Michelangelo Buonarroti', 'A collection of Michelangelo Buonarroti''s work'),
+        (354, 'Rembrandt van Rijn', 'A collection of Rembrandt van Rijn''s work'),
+        (355, 'Johannes Vermeer', 'A collection of Johannes Vermeer''s work'),
+        (356, 'Salvador Dalí', 'A collection of Salvador Dalí''s work'),
+        (357, 'Frida Kahlo', 'A collection of Frida Kahlo''s work'),
+        (358, 'Andy Warhol', 'A collection of Andy Warhol''s work'),
+        (359, 'Georgia O''Keeffe', 'A collection of Georgia O''Keeffe''s work'),
+        (360, 'Gustav Klimt', 'A collection of Gustav Klimt''s work'),
+        (361, 'Edvard Munch', 'A collection of Edvard Munch''s work'),
+        (362, 'Henri Matisse', 'A collection of Henri Matisse''s work'),
+        (363, 'Jackson Pollock', 'A collection of Jackson Pollock''s work'),
+        (364, 'Auguste Rodin', 'A collection of Auguste Rodin''s work'),
+        (365, 'Artemisia Gentileschi', 'A collection of Artemisia Gentileschi''s work'),
+        (366, 'Katsushika Hokusai', 'A collection of Katsushika Hokusai''s work'),
+        (367, 'Pierre-Auguste Renoir', 'A collection of Pierre-Auguste Renoir''s work'),
+        (368, 'John Singer Sargent', 'A collection of John Singer Sargent''s work'),
+        (369, 'Thomas Cole', 'A collection of Thomas Cole''s work');
