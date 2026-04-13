@@ -8,6 +8,7 @@ import logging
 from backend.artifacts.artifacts_routes import artifacts
 from backend.museum_workers.museum_worker_routes import museum_worker
 from backend.donors.donors_routes import donors
+from api.backend.requests.requests_routes import requests
 
 from backend.db_connection import init_app as init_db
 from backend.simple.simple_routes import simple_routes
@@ -48,5 +49,6 @@ def create_app():
     app.register_blueprint(artifacts, url_prefix="/artifacts")
     app.register_blueprint(museum_worker, url_prefix="/museum_workers")
     app.register_blueprint(donors, url_prefix="/donors")
+    app.register_blueprint(requests, url_prefix="/requests")
 
     return app
