@@ -4,7 +4,9 @@ import os
 import logging
 
 #API Endpoints
+# NOTE: Could we register these routes or import these recursively?
 from backend.artifacts.artifacts_routes import artifacts
+from backend.museum_workers.museum_worker_routes import museum_worker
 
 from backend.db_connection import init_app as init_db
 from backend.simple.simple_routes import simple_routes
@@ -43,5 +45,6 @@ def create_app():
     
     # Put enpoints here - Doruk 
     app.register_blueprint(artifacts, url_prefix="/artifacts")
+    app.register_blueprint(museum_worker, url_prefix="/museum_workers")
 
     return app
