@@ -90,8 +90,10 @@ CREATE TABLE ExpansionProject(
     description text,
     status ENUM('pending', 'approved', 'denied', 'ongoing') NOT NULL,
     costDollarAmount int,
-    contactName varchar(50),
-    contactphone varchar(20),
+    contactFirstName varchar(50),
+    contactMiddleName varchar(50),
+    contactLastName varchar(50),
+    contactPhone varchar(20),
     contactEmail varchar(50),
 
     FOREIGN KEY (headedByBranchID) REFERENCES MuseumBranch (branchID)
@@ -109,13 +111,13 @@ CREATE TABLE Artist(
 CREATE TABLE Artifact(
     artifactID int PRIMARY KEY,
     artistID int,
-    name varchar(50) NOT NULL ,
+    name text NOT NULL ,
     description text,
     imageURL text,
     artifactCondition ENUM('pristine', 'good', 'fair', 'poor', 'requires restoration'),
     style varchar(50),
     createdYear int,
-    medium varchar(50),
+    medium text,
     archivedByEmployeeID int NOT NULL ,
     displayedInExhibitID int,
     FOREIGN KEY (artistID) REFERENCES Artist (artistID),
