@@ -1,6 +1,5 @@
-# Idea borrowed from https://github.com/fsmosca/sample-streamlit-authenticator
-
-# This file has functions to add links to the left sidebar based on the user's role.
+# Sidebar navigation for The Singer-Sargent Archives
+# Controls which links appear based on user role
 
 import streamlit as st
 
@@ -12,69 +11,79 @@ def home_nav():
 
 
 def about_page_nav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+    st.sidebar.page_link("pages/99_About.py", label="About", icon="📄")
 
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
+# ---- Role: archivist --------------------------------------------------------
 
-def pol_strat_home_nav():
-    st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
-    )
+def archivist_home_nav():
+    st.sidebar.page_link("pages/10_Archivist_Home.py", label="Archivist Home", icon="📜")
 
 
-def world_bank_viz_nav():
-    st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
-    )
+def add_artifact_nav():
+    st.sidebar.page_link("pages/11_Add_Artifact.py", label="Add Artifact", icon="📁")
 
 
-def map_demo_nav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+def manage_artifacts_nav():
+    st.sidebar.page_link("pages/12_Manage_Artifacts.py", label="Manage Artifacts", icon="✏️")
 
 
-# ---- Role: usaid_worker -----------------------------------------------------
-
-def usaid_worker_home_nav():
-    st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
-    )
+def artifact_sets_nav():
+    st.sidebar.page_link("pages/13_Artifact_Sets.py", label="Artifact Sets", icon="📦")
 
 
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
+# ---- Role: curator ----------------------------------------------------------
+
+def curator_home_nav():
+    st.sidebar.page_link("pages/20_Curator_Home.py", label="Curator Home", icon="🎨")
 
 
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
+def search_artifacts_nav():
+    st.sidebar.page_link("pages/21_Search_Artifacts.py", label="Search Artifacts", icon="🔍")
 
 
-def prediction_nav():
-    st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
-    )
+def galleries_nav():
+    st.sidebar.page_link("pages/22_Galleries.py", label="Galleries", icon="🏛️")
 
 
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
+def artifact_requests_nav():
+    st.sidebar.page_link("pages/23_Artifact_Requests.py", label="Artifact Requests", icon="📋")
 
 
-def classification_nav():
-    st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
-    )
+# ---- Role: director ---------------------------------------------------------
+
+def director_home_nav():
+    st.sidebar.page_link("pages/30_Director_Home.py", label="Director Home", icon="👔")
 
 
-# ---- Role: administrator ----------------------------------------------------
-
-def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
+def donors_nav():
+    st.sidebar.page_link("pages/31_Donors.py", label="Donors", icon="💰")
 
 
-def ml_model_mgmt_nav():
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
+def loans_returns_nav():
+    st.sidebar.page_link("pages/32_Loans_Returns.py", label="Loans & Returns", icon="📅")
+
+
+def galleries_expansion_nav():
+    st.sidebar.page_link("pages/33_Galleries_Expansion.py", label="Galleries & Expansion", icon="🏗️")
+
+
+# ---- Role: researcher -------------------------------------------------------
+
+def researcher_home_nav():
+    st.sidebar.page_link("pages/40_Researcher_Home.py", label="Researcher Home", icon="🔬")
+
+
+def browse_collection_nav():
+    st.sidebar.page_link("pages/41_Browse_Collection.py", label="Browse Collection", icon="🖼️")
+
+
+def exhibits_nav():
+    st.sidebar.page_link("pages/42_Exhibits.py", label="Exhibits", icon="🗓️")
+
+
+def museum_stats_nav():
+    st.sidebar.page_link("pages/43_Museum_Stats.py", label="Museum Stats", icon="📊")
 
 
 # ---- Sidebar assembly -------------------------------------------------------
@@ -82,13 +91,10 @@ def ml_model_mgmt_nav():
 def SideBarLinks(show_home=False):
     """
     Renders sidebar navigation links based on the logged-in user's role.
-    The role is stored in st.session_state when the user logs in on Home.py.
     """
 
-    # Logo appears at the top of the sidebar on every page
     st.sidebar.image("assets/logo.png", width=150)
 
-    # If no one is logged in, send them to the Home (login) page
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
         st.switch_page("Home.py")
@@ -98,24 +104,30 @@ def SideBarLinks(show_home=False):
 
     if st.session_state["authenticated"]:
 
-        if st.session_state["role"] == "pol_strat_advisor":
-            pol_strat_home_nav()
-            world_bank_viz_nav()
-            map_demo_nav()
+        if st.session_state["role"] == "archivist":
+            archivist_home_nav()
+            add_artifact_nav()
+            manage_artifacts_nav()
+            artifact_sets_nav()
 
-        if st.session_state["role"] == "usaid_worker":
-            usaid_worker_home_nav()
-            ngo_directory_nav()
-            add_ngo_nav()
-            prediction_nav()
-            api_test_nav()
-            classification_nav()
+        if st.session_state["role"] == "curator":
+            curator_home_nav()
+            search_artifacts_nav()
+            galleries_nav()
+            artifact_requests_nav()
 
-        if st.session_state["role"] == "administrator":
-            admin_home_nav()
-            ml_model_mgmt_nav()
+        if st.session_state["role"] == "director":
+            director_home_nav()
+            donors_nav()
+            loans_returns_nav()
+            galleries_expansion_nav()
 
-    # About link appears at the bottom for all roles
+        if st.session_state["role"] == "researcher":
+            researcher_home_nav()
+            browse_collection_nav()
+            exhibits_nav()
+            museum_stats_nav()
+
     about_page_nav()
 
     if st.session_state["authenticated"]:

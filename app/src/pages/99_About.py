@@ -9,10 +9,10 @@ st.write("# About this App")
 
 st.markdown(
     """
-    This is a demo app for Data and Software in International Government and Politics Dialogue 2025 Project Course.  
-
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
+    The Singer-Sargent Archives is a data-driven application designed to help museums 
+    keep track of their artifacts and galleries. At any point, a museum is planning many 
+    exhibits and has many artworks on loan, so it is important to have an easy way to keep 
+    track of the museum's inventory at all times.
 
     Stay tuned for more information and features to come!
     """
