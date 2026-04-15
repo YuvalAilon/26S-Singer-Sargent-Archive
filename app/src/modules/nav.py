@@ -2,6 +2,7 @@
 # Controls which links appear based on user role
 
 import streamlit as st
+from PIL import Image
 
 
 # ---- General ----------------------------------------------------------------
@@ -89,11 +90,23 @@ def museum_stats_nav():
 # ---- Sidebar assembly -------------------------------------------------------
 
 def SideBarLinks(show_home=False):
+    st.markdown(
+    """
+    <style>
+    img {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
+
     """
     Renders sidebar navigation links based on the logged-in user's role.
     """
 
-    st.sidebar.image("assets/logo.png", width=150)
+    st.sidebar.image("assets/SSA_Logo_HighRes.png", width=32*7)
 
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
