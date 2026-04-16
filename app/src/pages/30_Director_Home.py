@@ -24,4 +24,3 @@ if st.button('Galleries & Expansion Projects',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/33_Galleries_Expansion.py')
-    
