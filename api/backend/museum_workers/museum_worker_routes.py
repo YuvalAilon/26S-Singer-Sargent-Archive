@@ -51,10 +51,10 @@ def get_museum_worker(employeeID):
             return jsonify({"error": "Museum worker not found"}), 404
 
         # Reuse the same cursor for the follow-up queries
-        cursor.execute("SELECT * FROM Artifact WHERE employeeID = %s", (employeeID,))
+        cursor.execute("SELECT * FROM Artifact WHERE archivedByEmployeeID = %s", (employeeID,))
         museum_worker["Artifact"] = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM Roles WHERE employeeID = %s", (employeeID,))
+        cursor.execute("SELECT * FROM Roles WHERE roleID = %s", (museum_worker["roleID"],))
         museum_worker["Roles"] = cursor.fetchall()
 
         return jsonify(museum_worker), 200
