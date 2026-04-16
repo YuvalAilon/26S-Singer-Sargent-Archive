@@ -99,7 +99,7 @@ def create_museum_worker():
         cursor.close()
 
 # PUT /museum_workers/<museumWorkerID>
-@museum_workers.route("/museum_workers/<int:worker_id>", methods=["PUT"])
+@museum_workers.route("/museum_workers/<int:employeeID>", methods=["PUT"])
 def update_museum_worker(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -130,7 +130,7 @@ def update_museum_worker(employeeID):
         cursor.close()
 
 #DELETE /museum_workers
-@museum_workers.route("/museum_workers/<int:worker_id>", methods=["DELETE"])
+@museum_workers.route("/museum_workers/<int:employeeID>", methods=["DELETE"])
 def delete_museum_worker(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -146,6 +146,22 @@ def delete_museum_worker(employeeID):
         return jsonify({"message": "Museum worker deleted successfully"}), 200
     except Error as e:
         current_app.logger.error(f'Database error in delete_museum_worker: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        
+#GET all artifacts archived by a museum worker
+@museum_workers.route("/museum_workers/<int:employeeID>/artifacts", methods=["GET"])
+def get_museum_worker_artifacts(employeeID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT Artifact FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Museum worker not found"}), 404
+
+        cursor.execute("SELECT * FROM Donors WHERE NGO_ID = %s", (employeeID,))
+        return jsonify(cursor.fetchall()), 200
+    except Error as e:
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
