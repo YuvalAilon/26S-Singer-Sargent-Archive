@@ -5,7 +5,7 @@ from mysql.connector import Error
 museum_workers = Blueprint("museum_workers", __name__)
 
 #GET /museum_workers
-@museum_workers.route("/museum_workers", methods=["GET"])
+@museum_workers.route("/", methods=["GET"])
 def get_all_museum_workers():
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -40,7 +40,7 @@ def get_all_museum_workers():
         cursor.close()
         
 # Get detailed information about a specific museum worker
-@museum_workers.route("/museumworkers/<int:employeeID>", methods=["GET"])
+@museum_workers.route("/<int:employeeID>", methods=["GET"])
 def get_museum_worker(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -57,7 +57,7 @@ def get_museum_worker(employeeID):
         cursor.execute("SELECT * FROM Roles WHERE employeeID = %s", (employeeID,))
         museum_worker["Roles"] = cursor.fetchall()
 
-        return jsonify(ngo), 200
+        return jsonify(museum_worker), 200
     except Error as e:
         return jsonify({"error": str(e)}), 500
     finally:
@@ -65,7 +65,7 @@ def get_museum_worker(employeeID):
 
 
 # POST /museum_workers
-@museum_workers.route("/museum_workers", methods=["POST"])
+@museum_workers.route("/", methods=["POST"])
 def create_museum_worker():
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -84,7 +84,7 @@ def create_museum_worker():
         
         cursor.execute(query, (
             data["firstName"],
-            data("middleName"),
+            data.get("middleName"),
             data["lastName"],
             data["email"],
             data["roleID"],
@@ -99,7 +99,7 @@ def create_museum_worker():
         cursor.close()
 
 # PUT /museum_workers/<museumWorkerID>
-@museum_workers.route("/museum_workers/<int:employeeID>", methods=["PUT"])
+@museum_workers.route("/<int:employeeID>", methods=["PUT"])
 def update_museum_worker(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -118,7 +118,7 @@ def update_museum_worker(employeeID):
             return jsonify({"error": "No valid fields to update"}), 400
 
         params.append(employeeID)
-        query = f"UPDATE museum_workers SET {', '.join(update_fields)} WHERE employeeID = %s"
+        query = f"UPDATE MuseumWorker SET {', '.join(update_fields)} WHERE employeeID = %s"
         cursor.execute(query, params)
         get_db().commit()
 
@@ -130,17 +130,17 @@ def update_museum_worker(employeeID):
         cursor.close()
 
 #DELETE /museum_workers
-@museum_workers.route("/museum_workers/<int:employeeID>", methods=["DELETE"])
+@museum_workers.route("/<int:employeeID>", methods=["DELETE"])
 def delete_museum_worker(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
         current_app.logger.info(f'DELETE /museum_workers/{employeeID}')
 
-        cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID))
+        cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
         if not cursor.fetchone():
             return jsonify({"error": "Museum worker not found"}), 404
 
-        cursor.execute("DELETE FROM MuseumWorker WHERE employeeID = %s", (employeeID))
+        cursor.execute("DELETE FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
         get_db().commit()
 
         return jsonify({"message": "Museum worker deleted successfully"}), 200
@@ -151,7 +151,7 @@ def delete_museum_worker(employeeID):
         cursor.close()
         
 #GET all artifacts archived by a museum worker
-@museum_workers.route("/museum_workers/<int:employeeID>/artifacts", methods=["GET"])
+@museum_workers.route("/<int:employeeID>/artifacts", methods=["GET"])
 def get_museum_worker_artifacts(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
