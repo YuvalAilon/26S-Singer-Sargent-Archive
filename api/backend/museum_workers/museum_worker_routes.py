@@ -155,11 +155,11 @@ def delete_museum_worker(employeeID):
 def get_museum_worker_artifacts(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
-        cursor.execute("SELECT Artifact FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
+        cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
         if not cursor.fetchone():
             return jsonify({"error": "Museum worker not found"}), 404
 
-        cursor.execute("SELECT * FROM Donors WHERE NGO_ID = %s", (employeeID,))
+        cursor.execute("SELECT * FROM Artifact WHERE archivedByEmployeeID = %s", (employeeID,))
         return jsonify(cursor.fetchall()), 200
     except Error as e:
         return jsonify({"error": str(e)}), 500
