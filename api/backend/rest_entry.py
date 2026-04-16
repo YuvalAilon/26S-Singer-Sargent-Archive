@@ -49,7 +49,7 @@ def create_app():
     app.register_blueprint(artifacts, url_prefix="/artifacts")
     app.register_blueprint(museum_workers, url_prefix="/museum_workers")
     app.register_blueprint(donors, url_prefix="/donors")
-    # app.register_blueprint(requests, url_prefix="/requests")
+    app.register_blueprint(requests, url_prefix="/requests")
     # Add more here if required, but we've fulfilled the 4 blueprints requirement
 
     return app

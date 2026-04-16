@@ -12,7 +12,7 @@ def get_all_requests(artifact_id):
 def future_returns():
     return getDBQuery("SELECT * FROM ArtifactRequest WHERE loanDateEnd > CURDATE()", 'GET /future-returns')
 
-@requests.route("/<str:before_date>", methods=["GET"])
+@requests.route("/before/<string:before_date>", methods=["GET"])
 def future_returns_before(before_date):
     return getDBQuery(
         "SELECT * FROM ArtifactRequest WHERE loanDateEnd <= " + before_date,
