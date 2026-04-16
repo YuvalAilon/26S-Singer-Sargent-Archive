@@ -7,7 +7,7 @@ donors = Blueprint("donors", __name__)
 #GET /donors
 
 # Get all donors in the system
-@donors.route("/donors", methods=["GET"])
+@donors.route("", methods=["GET"])
 def get_all_donors():
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -26,7 +26,7 @@ def get_all_donors():
         cursor.close()
 
 # Gets the donor with a specific id
-@donors.route("/donors/<int:donor_id>", methods=["GET"])
+@donors.route("/<int:donor_id>", methods=["GET"])
 def get_donor(donor_id):
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -44,7 +44,7 @@ def get_donor(donor_id):
 
 
 # /donors/top-monetary
-@donors.route("/donors/top-monetary", methods=["GET"])
+@donors.route("/top-monetary", methods=["GET"])
 def get_top_monetary_donors():
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -65,7 +65,7 @@ ORDER BY total_donations DESC
 
         if count:
             query += " LIMIT %s"
-            params.append(count)
+            params.append(int(count))
 
         cursor.execute(query, params)
         top_donor_list = cursor.fetchall()
@@ -79,7 +79,7 @@ ORDER BY total_donations DESC
         cursor.close()
 
 # /donors/top-artifact
-@donors.route("/donors/top-artifact", methods=["GET"])
+@donors.route("/top-artifact", methods=["GET"])
 def get_top_artifact_donors():
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -90,17 +90,17 @@ def get_top_artifact_donors():
             raise Error(msg=f"Provided count ({count}) was not positive")
 
         query = """
-SELECT contactFirstName, contactLastName, email, SUM(MD.amount) AS total_donations
+SELECT contactFirstName, contactLastName, email, COUNT(*) AS pieces_donated
 FROM Donors
-JOIN `Singer-Sargent-Archive`.MonetaryDonation MD ON Donors.donorID = MD.donorID
+JOIN `Singer-Sargent-Archive`.ArtifactRequest AR ON Donors.donorID = AR.loaningDonorID
 GROUP BY Donors.donorID
-ORDER BY total_donations DESC
+ORDER BY pieces_donated DESC
 """
         params = []
 
         if count:
             query += " LIMIT %s"
-            params.append(count)
+            params.append(int(count))
 
         cursor.execute(query, params)
         top_donor_list = cursor.fetchall()
@@ -114,7 +114,7 @@ ORDER BY total_donations DESC
         cursor.close()
 
 # Getting all individual donations
-@donors.route("/donors/donations", methods=["GET"])
+@donors.route("/donations", methods=["GET"])
 def get_all_donations():
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -124,7 +124,7 @@ def get_all_donations():
 SELECT contactFirstName, contactLastName, amount, reason
 FROM MonetaryDonation
 JOIN `Singer-Sargent-Archive`.Donors D ON MonetaryDonation.donorID = D.donorID
-ORDER BY d.donorID;
+ORDER BY D.donorID;
 """
         cursor.execute(query)
         donations = cursor.fetchall()
@@ -138,7 +138,7 @@ ORDER BY d.donorID;
         cursor.close()
 
 # Getting all individual donations
-@donors.route("/donors/<int:donor_id>/donations", methods=["GET"])
+@donors.route("/<int:donor_id>/donations", methods=["GET"])
 def get_donations_by_donor(donor_id):
     cursor = get_db().cursor(dictionary=True)
     try:
@@ -149,7 +149,6 @@ SELECT contactFirstName, contactLastName, amount, reason
 FROM MonetaryDonation
 JOIN `Singer-Sargent-Archive`.Donors D ON MonetaryDonation.donorID = D.donorID
 WHERE D.donorID = %s
-ORDER BY d.donorID;
 """
         cursor.execute(query, (donor_id,))
         donations = cursor.fetchall()
