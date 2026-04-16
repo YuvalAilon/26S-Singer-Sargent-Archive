@@ -10,7 +10,7 @@ CREATE TABLE Roles(
 );
 
 CREATE TABLE MuseumWorker(
-    employeeID int PRIMARY KEY,
+    employeeID int PRIMARY KEY AUTO_INCREMENT,
     firstName varchar(50),
     middleName varchar(50),
     lastName varchar(50),
