@@ -138,8 +138,32 @@ ORDER BY D.donorID;
         cursor.close()
 
 # Getting all individual donations
-@donors.route("/<int:donor_id>/donations", methods=["GET"])
-def get_donations_by_donor(donor_id):
+@donors.route("/<int:donor_id>/donations/monetary", methods=["GET"])
+def get_monetary_donations_by_donor(donor_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info('GET /donors/donations')
+
+        query = """
+SELECT contactFirstName, contactLastName, amount, reason
+FROM MonetaryDonation
+JOIN `Singer-Sargent-Archive`.Donors D ON MonetaryDonation.donorID = D.donorID
+WHERE D.donorID = %s
+"""
+        cursor.execute(query, (donor_id,))
+        donations = cursor.fetchall()
+
+        current_app.logger.info(f'Retrieved {len(donations)} individual donations')
+        return jsonify(donations), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in get_donations_by_donor: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+# Getting all individual donations
+@donors.route("/<int:donor_id>/donations/monetary", methods=["GET"])
+def get_artifact_donations_by_donor(donor_id):
     cursor = get_db().cursor(dictionary=True)
     try:
         current_app.logger.info('GET /donors/donations')
@@ -162,7 +186,68 @@ WHERE D.donorID = %s
         cursor.close()
 
 #POST /donors
+@donors.route("", methods=["POST"])
+def add_donor():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        data = request.get_json()
 
+        required_fields = ["organizationName", "email", "contactTitle", "contactFirstName", "contactMiddleName", "contactLastName", "street", "city", "zip"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        query = """
+            INSERT INTO Donors (organizationName, email, contactTitle, contactFirstName, contactMiddleName, contactLastName, street, city, zip)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(query, (
+            data["organizationName"],
+            data["email"],
+            data["contactTitle"],
+            data["contactFirstName"],
+            data["contactMiddleName"],
+            data["contactLastName"],
+            data["street"],
+            data["city"],
+            data["zip"]
+            ))
+
+        get_db().commit()
+        return jsonify({"message": "Donor entered successfully", "donorID": cursor.lastrowid}), 201
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+@donors.route("/<int:donor_id>/donations/monetary", methods=["POST"])
+def create_ngo():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        data = request.get_json()
+
+        required_fields = ["amount", "reason", "donorID", "branchID"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        query = """
+            INSERT INTO MonetaryDonation (amount, reason, donorID, branchID)
+            VALUES (%s, %s, %s, %s)
+        """
+        cursor.execute(query, (
+            data["amount"],
+            data["reason"],
+            data["donorID"],
+            data["branchID"]
+            ))
+
+        get_db().commit()
+        return jsonify({"message": "Donation entered successfully", "monetaryDonationID": cursor.lastrowid}), 201
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 #PUT /donors
 
-#DELETE /donors
+# No DELETE for donors
