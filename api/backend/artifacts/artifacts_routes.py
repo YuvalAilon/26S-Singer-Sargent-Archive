@@ -45,7 +45,7 @@ def get_artifact_artist(artifact_id):
 def get_artifact_artist(artifact_id):
     getDBQuery(
         "SELECT * from Exhibits WHERE exhibitID = (SELECT displayedInExhibitID FROM Artifact WHERE artifactID ="+ artifact_id + ");",
-        "GET /artifacts/<int:artifact_id>/archived-by"
+        "GET /artifacts/<int:artifact_id>/exhibit"
         )
 #PUT /artifacts
 
