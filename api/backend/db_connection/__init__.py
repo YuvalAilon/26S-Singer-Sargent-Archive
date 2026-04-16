@@ -9,7 +9,8 @@
 # the request ends. That cleanup is registered via init_app().
 #------------------------------------------------------------
 import mysql.connector
-from flask import g, current_app
+from flask import g, current_app, jsonify
+from mysql.connector import Error
 
 
 def get_db():
