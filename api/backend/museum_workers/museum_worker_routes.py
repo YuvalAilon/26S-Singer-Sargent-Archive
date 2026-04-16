@@ -103,7 +103,7 @@ def create_museum_worker():
 def update_museum_worker(employeeID):
     cursor = get_db().cursor(dictionary=True)
     try:
-        current_app.logger.info(f'PUT /museum_workers/{worker_id}')
+        current_app.logger.info(f'PUT /museum_workers/{employeeID}')
         data = request.get_json()
 
         cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
@@ -130,13 +130,22 @@ def update_museum_worker(employeeID):
         cursor.close()
 
 #DELETE /museum_workers
-@museum_workers.route("/museum_workers", methods=["DELETE"])
-def get_museum_workers():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("")
-    rows = cursor.fetchall()
-    db.commit()
-    if cursor.rowcount == 0:
-        return jsonify({"error": "Not found"}), 404
-    return jsonify(rows), 200
+@museum_workers.route("/museum_workers/<int:worker_id>", methods=["DELETE"])
+def delete_museum_worker(employeeID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f'DELETE /museum_workers/{employeeID}')
+
+        cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID))
+        if not cursor.fetchone():
+            return jsonify({"error": "Museum worker not found"}), 404
+
+        cursor.execute("DELETE FROM MuseumWorker WHERE employeeID = %s", (employeeID))
+        get_db().commit()
+
+        return jsonify({"message": "Museum worker deleted successfully"}), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in delete_museum_worker: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
