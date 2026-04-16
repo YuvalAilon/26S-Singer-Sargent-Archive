@@ -165,3 +165,19 @@ def get_museum_worker_artifacts(employeeID):
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+        
+#GET all artifacts requests made by a museum worker
+@museum_workers.route("/<int:employeeID>/artifact_requests", methods=["GET"])
+def get_museum_worker_artifact_requests(employeeID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Museum worker not found"}), 404
+
+        cursor.execute("SELECT * FROM ArtifactRequest WHERE requestingEmployeeID = %s", (employeeID,))
+        return jsonify(cursor.fetchall()), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
