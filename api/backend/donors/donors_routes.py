@@ -113,6 +113,55 @@ ORDER BY total_donations DESC
     finally:
         cursor.close()
 
+# Getting all individual donations
+@donors.route("/donors/donations", methods=["GET"])
+def get_all_donations():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info('GET /donors/donations')
+
+        query = """
+SELECT contactFirstName, contactLastName, amount, reason
+FROM MonetaryDonation
+JOIN `Singer-Sargent-Archive`.Donors D ON MonetaryDonation.donorID = D.donorID
+ORDER BY d.donorID;
+"""
+        cursor.execute(query)
+        donations = cursor.fetchall()
+
+        current_app.logger.info(f'Retrieved {len(donations)} individual donations')
+        return jsonify(donations), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in get_all_donations: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+# Getting all individual donations
+@donors.route("/donors/<int:donor_id>/donations", methods=["GET"])
+def get_donations_by_donor(donor_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info('GET /donors/donations')
+
+        query = """
+SELECT contactFirstName, contactLastName, amount, reason
+FROM MonetaryDonation
+JOIN `Singer-Sargent-Archive`.Donors D ON MonetaryDonation.donorID = D.donorID
+WHERE D.donorID = %s
+ORDER BY d.donorID;
+"""
+        cursor.execute(query, (donor_id,))
+        donations = cursor.fetchall()
+
+        current_app.logger.info(f'Retrieved {len(donations)} individual donations')
+        return jsonify(donations), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in get_donations_by_donor: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
 #POST /donors
 
 #PUT /donors
