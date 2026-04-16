@@ -78,7 +78,7 @@ def create_museum_worker():
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
         query = """
-            INSERT INTO museum_workers (firstName, middleName, lastName, email, roleID)
+            INSERT INTO MuseumWorker (firstName, middleName, lastName, email, roleID)
             VALUES (%s, %s, %s, %s, %s)
         """
         
@@ -91,24 +91,43 @@ def create_museum_worker():
         ))
         
         get_db().commit()
-        return jsonify({"message": "Museum worker created successfully", "museumWorkerID": cursor.lastrowid}), 201
+        return jsonify({"message": "Museum worker created successfully", "employeeID": cursor.lastrowid}), 201
     except Error as e:
         current_app.logger.error(f'Database error in create_museum_worker: {e}')
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
 
-#PUT /museum_workers
-@museum_workers.route("/museum_workers", methods=["PUT"])
-def get_museum_workers():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("")
-    rows = cursor.fetchall()
-    db.commit()
-    if cursor.rowcount == 0:
-        return jsonify({"error": "Not found"}), 404
-    return jsonify(rows), 200
+# PUT /museum_workers/<museumWorkerID>
+@museum_workers.route("/museum_workers/<int:worker_id>", methods=["PUT"])
+def update_museum_worker(employeeID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f'PUT /museum_workers/{worker_id}')
+        data = request.get_json()
+
+        cursor.execute("SELECT employeeID FROM MuseumWorker WHERE employeeID = %s", (employeeID,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Museum worker not found"}), 404
+
+        allowed_fields = ["firstName", "middleName", "lastName", "email", "roleID"]
+        update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
+        params = [data[f] for f in allowed_fields if f in data]
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+
+        params.append(employeeID)
+        query = f"UPDATE museum_workers SET {', '.join(update_fields)} WHERE employeeID = %s"
+        cursor.execute(query, params)
+        get_db().commit()
+
+        return jsonify({"message": "Museum worker updated successfully"}), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in update_museum_worker: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 
 #DELETE /museum_workers
 @museum_workers.route("/museum_workers", methods=["DELETE"])
