@@ -9,7 +9,8 @@
 # the request ends. That cleanup is registered via init_app().
 #------------------------------------------------------------
 import mysql.connector
-from flask import g, current_app
+from flask import g, current_app, jsonify
+from mysql.connector import Error
 
 
 def get_db():
@@ -37,3 +38,19 @@ def init_app(app):
     # only when a route actually needs it. init_app's only job is to make
     # sure the cleanup always happens, even if the route raises an exception.
     app.teardown_appcontext(close_db)
+
+def getDBQuery(query, loggerInfo):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(loggerInfo)
+
+        cursor.execute(query)
+        list = cursor.fetchall()
+
+        current_app.logger.info(f'Retrieved {len(list)} entries')
+        return jsonify(list), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in get_all_ngos: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
