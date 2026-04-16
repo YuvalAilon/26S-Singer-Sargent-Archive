@@ -64,18 +64,39 @@ def get_museum_worker(employeeID):
         cursor.close()
 
 
-#POST /museum_workers
+# POST /museum_workers
 @museum_workers.route("/museum_workers", methods=["POST"])
 def create_museum_worker():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "INSERT INTO museum_workers (firstName, middleName, lastName, email, roleID) VALUES (%s, %s, %s, %s, %s)",
-        (data["firstName"], )
-        )
-    rows = cursor.fetchall()
-    db.commit()
-    return jsonify(rows), 201
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info('POST /museum_workers')
+        data = request.get_json()
+
+        required_fields = ["firstName", "lastName", "email", "roleID"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        query = """
+            INSERT INTO museum_workers (firstName, middleName, lastName, email, roleID)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        
+        cursor.execute(query, (
+            data["firstName"],
+            data("middleName"),
+            data["lastName"],
+            data["email"],
+            data["roleID"],
+        ))
+        
+        get_db().commit()
+        return jsonify({"message": "Museum worker created successfully", "museumWorkerID": cursor.lastrowid}), 201
+    except Error as e:
+        current_app.logger.error(f'Database error in create_museum_worker: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 
 #PUT /museum_workers
 @museum_workers.route("/museum_workers", methods=["PUT"])
