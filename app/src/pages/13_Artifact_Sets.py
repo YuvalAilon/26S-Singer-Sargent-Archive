@@ -19,7 +19,7 @@ tab1, tab2, tab3 = st.tabs(["View Sets", "Create New Set", "Add / Remove Artifac
 with tab1:
     st.subheader("Existing Artifact Sets")
     try:
-        res = requests.get(f"{API_BASE}/artifact-sets")
+        res = requests.get(f"{API_BASE}/artifact_groups")
         if res.status_code == 200:
             data = res.json()
             if data:
@@ -55,7 +55,7 @@ with tab2:
                     "description": set_description or None,
                 }
                 try:
-                    res = requests.post(f"{API_BASE}/artifact-sets", json=payload)
+                    res = requests.post(f"{API_BASE}/artifact_groups", json=payload)
                     if res.status_code in (200, 201):
                         st.success(f"Created set '{set_name}'.")
                     else:
