@@ -111,6 +111,12 @@ with tab2:
                     "contactEmail": "Contact Email",
                     "contactPhone": "Contact Phone",
                 })
+                branch_options = ["All"]
+                if "Branch" in df.columns:
+                    branch_options += sorted(df["Branch"].dropna().unique().tolist())
+                selected_branch = st.selectbox("Filter by Branch", branch_options)
+                if selected_branch != "All":
+                    df = df[df["Branch"] == selected_branch]
                 st.dataframe(df, use_container_width=True, hide_index=True)
             else:
                 st.info("No expansion projects found.")
@@ -128,7 +134,9 @@ with tab2:
         proj_desc = st.text_area("Description")
         proj_status = st.selectbox("Status", ["pending", "approved", "denied", "ongoing"])
         proj_cost = st.number_input("Cost ($)", min_value=0, step=1000)
-        proj_contact = st.text_input("Contact Name")
+        proj_first = st.text_input("Contact First Name")
+        proj_middle = st.text_input("Contact Middle Name")
+        proj_last = st.text_input("Contact Last Name")
         proj_phone = st.text_input("Contact Phone")
         proj_email = st.text_input("Contact Email")
         create_submitted = st.form_submit_button("Create Project")
@@ -141,7 +149,9 @@ with tab2:
                         "description": proj_desc,
                         "status": proj_status,
                         "costDollarAmount": proj_cost,
-                        "contactName": proj_contact,
+                        "contactFirstName": proj_first,
+                        "contactMiddleName": proj_middle,
+                        "contactLastName": proj_last,
                         "contactPhone": proj_phone,
                         "contactEmail": proj_email,
                     },
