@@ -10,6 +10,7 @@ from backend.museum_workers.museum_worker_routes import museum_workers
 from backend.donors.donors_routes import donors
 from backend.requests.requests_routes import requests
 from backend.branches.branches_routes import branches
+from backend.galleries.galleries_routes import galleries
 
 from backend.db_connection import init_app as init_db
 from backend.simple.simple_routes import simple_routes
@@ -51,6 +52,7 @@ def create_app():
     app.register_blueprint(museum_workers, url_prefix="/museum_workers")
     app.register_blueprint(donors, url_prefix="/donors")
     app.register_blueprint(branches, url_prefix="/branches")
+    app.register_blueprint(galleries, url_prefix="/galleries")
     # app.register_blueprint(requests, url_prefix="/requests")
     # Add more here if required, but we've fulfilled the 4 blueprints requirement
 
