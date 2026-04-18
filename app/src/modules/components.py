@@ -169,6 +169,42 @@ def artifact_request_dropdown(label="Select a Loan Request", key="request_picker
         st.error(f"Failed to load requests: {e}")
         return None
 
+def branch_dropdown(label="Select Museum Branch", key="branch_selector"):
+    """
+    Reusable dropdown component that fetches museum branches from the API.
+    Returns the selected branchID or None if no branches exist.
+    """
+    try:
+        # Fetch data from your branches blueprint
+        res = requests.get(f"{API_BASE}/branches/")
+        
+        if res.status_code == 200:
+            branches = res.json()
+            if not branches:
+                st.info("No museum branches available.")
+                return None
+            
+            # Map "Name (City)" -> branchID for the UI
+            # Using both name and city prevents issues if two branches have the same name
+            branch_map = {
+                f"{b['branchName']} ({b['city']})": b['branchID'] 
+                for b in branches
+            }
+            
+            selected_label = st.selectbox(
+                label, 
+                options=list(branch_map.keys()), 
+                key=key
+            )
+            
+            return branch_map[selected_label]
+        else:
+            st.error(f"Failed to load branches (HTTP {res.status_code})")
+            return None
+    except Exception as e:
+        st.error(f"Dropdown Error: {e}")
+        return None
+
 def display_artifact_cards(artifacts_json):
     """
     Takes a list of artifact dictionaries and renders them as pretty cards.

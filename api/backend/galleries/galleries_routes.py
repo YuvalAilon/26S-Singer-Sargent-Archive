@@ -130,3 +130,36 @@ def delete_gallery(galleryID):
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close() 
+# Updated POST /galleries
+@galleries.route("/", methods=["POST"])
+def create_gallery():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        data = request.get_json()
+        
+        if not data.get("galleryID") or not data.get("branchID"):
+            return jsonify({"error": "galleryID and branchID are both required for the Primary Key"}), 400
+
+        query = """
+            INSERT INTO Galleries (galleryID, branchID, name, wing, artworkCapacity)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        params = (
+            data["galleryID"],
+            data["branchID"],
+            data.get("name"),
+            data.get("wing"),
+            data.get("artworkCapacity")
+        )
+
+        cursor.execute(query, params)
+        get_db().commit()
+
+        return jsonify({"message": "Gallery created", "galleryID": data["galleryID"]}), 201
+
+    except Error as e:
+        # If this triggers, it's likely a "Duplicate entry" or "Foreign key fail"
+        current_app.logger.error(f"Database Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()

@@ -4,7 +4,10 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 import requests
 import pandas as pd
+import time
 from modules.nav import SideBarLinks
+from modules.components import *
+
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -66,7 +69,7 @@ with tab1:
     st.subheader("Add New Gallery")
     with st.form("add_gallery_form"):
         new_gal_id = st.number_input("Gallery ID", min_value=1, step=1, key="new_gal_id")
-        new_gal_branch = st.number_input("Branch ID", min_value=1, step=1, key="new_gal_branch")
+        new_gal_branch = branch_dropdown()
         new_gal_name = st.text_input("Gallery Name")
         new_gal_wing = st.text_input("Wing")
         new_gal_capacity = st.number_input("Artwork Capacity", min_value=1, step=1)
@@ -78,7 +81,6 @@ with tab1:
                     json={
                         "galleryID": new_gal_id,
                         "branchID": new_gal_branch,
-                        "isInUse": False,
                         "name": new_gal_name,
                         "wing": new_gal_wing,
                         "artworkCapacity": new_gal_capacity,
@@ -86,6 +88,8 @@ with tab1:
                 )
                 if res.status_code in (200, 201):
                     st.success("Gallery added successfully.")
+                    time.sleep(1)
+                    st.rerun()
                 else:
                     st.error(f"Error adding gallery (HTTP {res.status_code})")
             except requests.exceptions.ConnectionError:
@@ -101,36 +105,46 @@ with tab2:
         if res.status_code == 200:
             data = res.json()
             if data:
+                # 1. Create DataFrame and Rename Columns
+                # Note: Make sure 'branchName' exists in your API response! 
+                # If not, use 'headedByBranchID'.
                 df = pd.DataFrame(data).rename(columns={
                     "projectID": "Project ID",
-                    "branchName": "Branch",
+                    "headedByBranchID": "Branch ID", # Or "branchName": "Branch" if joined
                     "description": "Description",
                     "status": "Status",
                     "costDollarAmount": "Cost ($)",
-                    "contactName": "Contact",
                     "contactEmail": "Contact Email",
                     "contactPhone": "Contact Phone",
                 })
-                branch_options = ["All"]
-                if "Branch" in df.columns:
-                    branch_options += sorted(df["Branch"].dropna().unique().tolist())
-                selected_branch = st.selectbox("Filter by Branch", branch_options)
-                if selected_branch != "All":
-                    df = df[df["Branch"] == selected_branch]
-                st.dataframe(df, use_container_width=True, hide_index=True)
+
+                # 2. Add the Checkbox and Filter Logic
+                use_filter = st.checkbox("Filter by Branch")
+                
+                if use_filter:
+                    selected_branch = branch_dropdown(key="project_filter")
+                    # Correct way to filter rows in Pandas:
+                    # Replace "Branch ID" with whatever your column name is after renaming
+                    df = df[df["Branch ID"] == selected_branch]
+
+                # 3. Display Result
+                if df.empty:
+                    st.warning("No projects found for the selected branch.")
+                else:
+                    st.dataframe(df, use_container_width=True, hide_index=True)
             else:
                 st.info("No expansion projects found.")
         else:
             st.error(f"Error fetching projects (HTTP {res.status_code})")
     except requests.exceptions.ConnectionError:
         st.warning("Unable to connect to the API.")
-
     st.divider()
 
     # 3.7.4 – Create a new expansion project
     st.subheader("Create Expansion Project")
     with st.form("create_project_form"):
-        proj_branch = st.number_input("Branch ID", min_value=1, step=1, key="proj_branch")
+        proj_id = st.number_input("Project ID", min_value=0, step=1000)
+        proj_branch = branch_dropdown(key="expansion Project")
         proj_desc = st.text_area("Description")
         proj_status = st.selectbox("Status", ["pending", "approved", "denied", "ongoing"])
         proj_cost = st.number_input("Cost ($)", min_value=0, step=1000)
@@ -145,6 +159,7 @@ with tab2:
                 res = requests.post(
                     f"{API_BASE}/projects",
                     json={
+                        "projectID": proj_id,
                         "headedByBranchID": proj_branch,
                         "description": proj_desc,
                         "status": proj_status,
@@ -158,6 +173,8 @@ with tab2:
                 )
                 if res.status_code in (200, 201):
                     st.success("Expansion project created.")
+                    time.sleep(1)
+                    st.rerun()
                 else:
                     st.error(f"Error creating project (HTTP {res.status_code})")
             except requests.exceptions.ConnectionError:

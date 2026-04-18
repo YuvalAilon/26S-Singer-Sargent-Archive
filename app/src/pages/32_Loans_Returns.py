@@ -98,7 +98,9 @@ with tab3:
 
     if use_date_filter:
         before_date = st.date_input("Show returns due before")
-        url = f"{API_BASE}/requests/future-returns/{before_date}"
+        if before_date:
+            if st.button(f"Load Returns", type="primary"):
+                url = f"{API_BASE}/requests/before/'{before_date}'"
 
     try:
         res = requests.get(url)
@@ -119,3 +121,4 @@ with tab3:
             st.error(f"Error fetching returns (HTTP {res.status_code})")
     except requests.exceptions.ConnectionError:
         st.warning("Unable to connect to the API.")
+                    
