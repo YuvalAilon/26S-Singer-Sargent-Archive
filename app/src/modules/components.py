@@ -199,6 +199,7 @@ def display_artifact_cards(artifacts_json):
                 m1, m2 = st.columns(2)
                 m1.write(f"**Style:** {art.get('style', 'Unknown')}")
                 m1.write(f"**Year:** {art.get('createdYear', 'N/A')}")
+                m1.write(f"**Artist:** {art.get('firstName', '')} {art.get('lastName', 'Unknown')}")
                 m2.write(f"**Medium:** {art.get('medium', 'N/A')}")
                 m2.write(f"**Condition:** {art.get('artifactCondition', 'N/A')}")
                 
