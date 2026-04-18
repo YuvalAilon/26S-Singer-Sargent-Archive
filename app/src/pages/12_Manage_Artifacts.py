@@ -75,7 +75,7 @@ with tab2:
 
     if st.button("Find Incomplete Artifacts", type="primary", key="find_missing"):
         try:
-            res = requests.get(f"{API_BASE}/artifacts", params={"missing_info": True})
+            res = requests.get(f"{API_BASE}/artifacts/missing_info")
             if res.status_code == 200:
                 data = res.json()
                 if data:
