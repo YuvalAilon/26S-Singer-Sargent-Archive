@@ -5,7 +5,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
-from modules.components import artifact_group_dropdown
+from modules.components import *
 
 
 st.set_page_config(layout='wide')
@@ -51,35 +51,7 @@ with tab2:
                 if res.status_code == 200:
                     artifacts = res.json()
                     
-                    if not artifacts:
-                        st.warning("This set is currently empty.")
-                    else:
-                        # Display each artifact in a clean card format
-                        for art in artifacts:
-                            with st.container(border=True):
-                                img_col, text_col = st.columns([1, 2])
-                                
-                                with img_col:
-                                    # Check for imageURL and display if it exists
-                                    if art.get("imageURL"):
-                                        st.image(art["imageURL"], use_container_width=True)
-                                    else:
-                                        # Helpful placeholder so the UI doesn't look broken
-                                        st.image("https://via.placeholder.com/300x200?text=No+Image+Available", use_container_width=True)
-                                
-                                with text_col:
-                                    st.subheader(art.get("name", "Unnamed Artifact"))
-                                    
-                                    # Organized Metadata
-                                    meta_cols = st.columns(2)
-                                    meta_cols[0].write(f"**Style:** {art.get('style', 'Unknown')}")
-                                    meta_cols[0].write(f"**Year:** {art.get('createdYear', 'N/A')}")
-                                    meta_cols[1].write(f"**Medium:** {art.get('medium', 'N/A')}")
-                                    meta_cols[1].write(f"**Condition:** {art.get('artifactCondition', 'N/A')}")
-                                    
-                                    if art.get("description"):
-                                        with st.expander("Read Description"):
-                                            st.write(art["description"])
+                    display_artifact_cards(artifacts)
                 else:
                     st.error("Error: Could not retrieve artifacts for this group.")
             except Exception as e:

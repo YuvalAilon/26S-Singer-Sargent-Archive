@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
+from modules.components import *
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -48,20 +49,7 @@ with tab1:
             if res.status_code == 200:
                 data = res.json()
                 if data:
-                    df = pd.DataFrame(data)
-
-                    cols_to_keep = ["artifactID", "name", "style", "medium", "createdYear", "artifactCondition"]
-                    df = df[cols_to_keep]
-                    
-                    df.rename(columns={
-                        "artifactID": "ID",
-                        "name": "Name",
-                        "style": "Style",
-                        "medium": "Medium",
-                        "createdYear": "Year",
-                        "artifactCondition": "Condition",
-                    })
-                    st.dataframe(df, use_container_width=True, hide_index=True)
+                    display_artifact_cards(data)
                 else:
                     st.info("No artifacts found.")
             else:
