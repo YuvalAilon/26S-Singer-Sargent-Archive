@@ -148,7 +148,13 @@ with tab3:
             if save:
                 payload = {
                     "name": edit_name,
+                    "description": edit_description,
                     "condition": edit_condition,
+                    "medium": edit_medium,
+                    "imageURL": edit_image,
+                    "createdYear" : edit_year,
+                    "style": edit_style,
+
                 }
                 try:
                     res = requests.put(f"{API_BASE}/artifacts/{artifact_id}", json=payload)

@@ -232,7 +232,13 @@ def update_artifact_general(artifactID):
             "exhibitID": "displayedInExhibitID",
             "employeeID": "archivedByEmployeeID",
             "name": "name",
-            "condition": "artifactCondition"
+            "style": "style",
+            "condition" : "artifactCondition",
+            "description": "description",
+            "medium": "medium",
+            "imageURL": "imageURL",
+            "createdYear" : "createdYear",
+            "style": "style",
         }
 
         update_parts = []
