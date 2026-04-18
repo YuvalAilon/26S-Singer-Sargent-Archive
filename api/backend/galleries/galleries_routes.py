@@ -14,7 +14,7 @@ def get_all_galleries():
         branchID = request.args.get("branchID")
         wing = request.args.get("wing")
         name = request.args.get("name")
-        is_in_use = request.args("isInUse")
+        is_in_use = request.args.get("isInUse")
         artwork_capacity = request.args.get("artworkCapacity")
         
         query = "SELECT * FROM Galleries WHERE 1=1"
