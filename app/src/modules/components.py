@@ -127,6 +127,48 @@ def current_exhibits_dropdown(label="Select an Active Exhibit", key="exhibit_sel
         st.error(f"Dropdown error: {e}")
         return None
 
+def artifact_request_dropdown(label="Select a Loan Request", key="request_picker"):
+    """
+    Fetches all artifact requests and returns the selected requestID.
+    """
+    try:
+        res = requests.get(f"{API_BASE}/requests")
+        
+        if res.status_code == 200:
+            requests_data = res.json()
+            
+            if not requests_data:
+                st.info("No artifact requests found.")
+                return None
+
+            # Create the mapping: "Label" -> ID
+            request_options = {}
+            for r in requests_data:
+                # Format: "Request #101 (pending) - Starts: 2024-05-01"
+                date_str = r.get('loanDateStart', 'N/A')
+                # Cleaning up date string if it's a long timestamp
+                short_date = date_str.split('T')[0] if 'T' in str(date_str) else date_str
+                
+                display_label = f"Request #{r['requestID']} ({r['status']})"
+                request_options[display_label] = r['requestID']
+
+            selected_label = st.selectbox(
+                label, 
+                options=list(request_options.keys()), 
+                key=key
+            )
+            
+            # Return the integer ID
+            return request_options[selected_label]
+        
+        else:
+            st.error(f"Requests Error: Backend returned {res.status_code}")
+            return None
+            
+    except Exception as e:
+        st.error(f"Failed to load requests: {e}")
+        return None
+
 def display_artifact_cards(artifacts_json):
     """
     Takes a list of artifact dictionaries and renders them as pretty cards.
