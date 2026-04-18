@@ -20,6 +20,50 @@ def get_artifact_gallery(artifact_id):
     query = f"SELECT * FROM Galleries WHERE galleryID in (SELECT galleryID from Artifact JOIN Exhibits ON exhibitID = displayedInExhibitID WHERE artifactID = {artifact_id});"
     return getDBQuery(query, "GET /artifacts/id/gallery")
 
+@artifacts.route("/filter", methods=["GET"])
+def filter_artifacts_advanced():
+    artist_name = request.args.get("artistName")
+    name = request.args.get("name")
+    style = request.args.get("style")
+    condition = request.args.get("condition")
+    dateBefore = request.args.get("dateBefore")
+    dateAfter = request.args.get("dateAfter")
+    archivist_name = request.args.get("archivistName")
+    exhibit_id = request.args.get("exhibitID")
+
+    query = """
+        SELECT a.*, ar.firstName, ar.middleName, ar.lastName, mw.firstName as archivistFirstName
+        FROM Artifact a
+        LEFT JOIN Artist ar ON a.artistID = ar.artistID
+        LEFT JOIN MuseumWorker mw ON a.archivedByEmployeeID = mw.employeeID
+        WHERE 1=1
+    """
+    
+    if style:
+        query += f" AND a.style LIKE '%{style}%'"
+        
+    if artist_name:
+        query += f" AND (ar.firstName LIKE '%{artist_name}%' OR ar.middleName LIKE '%{artist_name}%' OR ar.lastName LIKE '%{artist_name}%')"
+        
+    if name:
+        query += f" AND a.name LIKE '%{name}%'"
+        
+    if condition:
+        query += f" AND a.artifactCondition = '{condition}'"
+        
+    if dateBefore:
+        query += f" AND a.createdYear <= '{dateBefore}'"
+
+    if dateAfter:
+        query += f" AND a.createdYear >= '{dateAfter}'"
+        
+    if archivist_name:
+        query += f" AND mw.firstName LIKE '%{archivist_name}%'"
+
+    if exhibit_id:
+        query += f" AND a.displayedInExhibitID = {exhibit_id}"
+
+    return getDBQuery(query, f"GET /artifacts/filter with advanced params")
 @artifacts.route("/<int:artifactID>/artifact_groups", methods=["GET"])
 def get_artifact_groups(artifactID):
     query = """
@@ -31,17 +75,17 @@ def get_artifact_groups(artifactID):
     return getDBQuery(query, "GET /artifacts/id/gallery")
 
 @artifacts.route("/<int:artifact_id>/artist")
-def get_artifact_artist(artifact_id): # Unique name
+def get_artifact_artist(artifact_id):
     query = f"SELECT * from Artist WHERE artistID = (SELECT artistID FROM Artifact WHERE artifactID = {artifact_id});"
     return getDBQuery(query, "GET /artifacts/id/artist")
 
 @artifacts.route("/<int:artifact_id>/archived-by")
-def get_artifact_worker(artifact_id): # Unique name
+def get_artifact_worker(artifact_id):
     query = f"SELECT * from MuseumWorker WHERE employeeID = (SELECT archivedByEmployeeID FROM Artifact WHERE artifactID = {artifact_id});"
     return getDBQuery(query, "GET /artifacts/id/archived-by")
 
 @artifacts.route("/<int:artifact_id>/exhibit")
-def get_artifact_exhibit(artifact_id): # Unique name
+def get_artifact_exhibit(artifact_id):
     query = f"SELECT * from Exhibits WHERE exhibitID = (SELECT displayedInExhibitID FROM Artifact WHERE artifactID = {artifact_id});"
     return getDBQuery(query, "GET /artifacts/id/exhibit")
 
@@ -75,8 +119,6 @@ def create_artifact():
         cursor.close()
 
 
-# DELETE /artifacts/{id}
-# Removes the artifact from the database entirely
 @artifacts.route("/<int:artifactID>", methods=["DELETE"])
 def delete_artifact(artifactID):
     cursor = get_db().cursor(dictionary=True)
@@ -96,8 +138,7 @@ def delete_artifact(artifactID):
     finally:
         cursor.close()
 
-# POST /artifacts/{id}/artifact_group
-# Adds the artifact to a specific group
+
 @artifacts.route("/<int:artifactID>/artifact_group", methods=["POST"])
 def add_artifact_to_group(artifactID):
     cursor = get_db().cursor(dictionary=True)
@@ -118,8 +159,7 @@ def add_artifact_to_group(artifactID):
     finally:
         cursor.close()
 
-# DELETE /artifacts/{id}/artifact_group
-# Removes the artifact from a specific group
+#
 @artifacts.route("/<int:artifactID>/artifact_group", methods=["DELETE"])
 def remove_artifact_from_group(artifactID):
     cursor = get_db().cursor(dictionary=True)
@@ -161,9 +201,6 @@ def remove_artifact_from_group(artifactID):
     finally:
         cursor.close()
 
-# PUT /artifacts/{id}
-# This one handles Artist, Exhibit, and Archivist updates in one go 
-# because they are all just columns in the Artifact table.
 @artifacts.route("/<int:artifactID>", methods=["PUT"])
 def update_artifact_general(artifactID):
     cursor = get_db().cursor(dictionary=True)
