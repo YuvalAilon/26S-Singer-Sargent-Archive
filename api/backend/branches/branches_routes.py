@@ -55,6 +55,9 @@ def get_branch(branchID):
 
         cursor.execute("SELECT * FROM Galleries WHERE branchID = %s", (branchID,))
         museum_branch["Galleries"] = cursor.fetchall()
+        
+        cursor.execute("SELECT * FROM MonetaryDonation WHERE branchID = %s", (branchID,))
+        museum_branch["Galleries"] = cursor.fetchall()
 
         return jsonify(museum_branch), 200
     except Error as e:
