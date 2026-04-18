@@ -43,6 +43,21 @@ def get_all_galleries():
     finally:
         cursor.close()
         
+#Get galleries not in use
+@galleries.route("/", methods=["GET"])
+def get_available_galleries():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info("GET /Galleries")
+        
+        cursor.execute("SELECT * FROM Galleries INNER JOIN Exhibits ON Exhibits.galleryID = Gallery.galleryID")
+        
+    except Error as e:
+        current_app.logger.error(f'Database error in get_all_galleries: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        
 # Get detailed information about a specific gallery
 @galleries.route("/<int:galleryID>", methods=["GET"])
 def get_branch(galleryID):
