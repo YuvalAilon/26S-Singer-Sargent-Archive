@@ -11,8 +11,21 @@ def get_all_requests():
     return getDBQuery("SELECT * FROM ArtifactRequest", 'GET ')
 
 @requests.route("/<int:request_id>", methods=["GET"])
-def get_request_by_id(artifact_id):
-    return getDBQuery("SELECT * FROM ArtifactRequest WHERE requestID = " + str(artifact_id) , 'GET /<int:artifact_id>')
+def get_request_by_id(request_id):
+    return getDBQuery("SELECT * FROM ArtifactRequest WHERE requestID = " + str(request_id) , 'GET /<int:artifact_id>')
+
+@requests.route("/<int:requestID>/artifacts", methods=["GET"])
+def get_artifacts_in_request(requestID):
+    """
+    Fetches all artifacts associated with a specific artifact request.
+    """
+    query = f"""
+        SELECT a.* FROM Artifact a
+        JOIN ArtifactRequestRelations arr ON a.artifactID = arr.artifactID
+        WHERE arr.requestID = {requestID}
+    """
+    # Using your existing getDBQuery helper
+    return getDBQuery(query, f"GET /requests/{requestID}/artifacts")
 
 @requests.route("/future-returns", methods=["GET"])
 def future_returns():

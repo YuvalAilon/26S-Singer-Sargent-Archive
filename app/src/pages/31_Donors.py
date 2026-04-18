@@ -21,16 +21,7 @@ tab1, tab2, tab3 = st.tabs([
 
 # ---- Tab 1: Donation History (3.1, 3.2.2) ------------------------------------
 with tab1:
-    view_mode = st.radio(
-        "View",
-        ["Monetary Donations", "Individual Donation Records"],
-        horizontal=True,
-    )
-
-    if view_mode == "Monetary Donations":
-        st.subheader("Past Monetary Donations")
-    else:
-        st.subheader("Individual Donation Records")
+    st.subheader("Donations")
 
     try:
         res = requests.get(f"{API_BASE}/donors/donations")

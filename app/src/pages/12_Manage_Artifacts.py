@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
+from modules.components import *
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -17,57 +18,7 @@ tab1, tab2, tab3 = st.tabs(["Browse All", "Missing Information", "Edit / Delete"
 
 # ------ Tab 1 : Browse All Artifacts ---------------------------------------------
 with tab1:
-    st.subheader("All Artifacts")
-
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        filter_artifact_name = st.text_input("Artifact Name", key="browse_artifact_name")
-    with col2:
-        filter_artist_name = st.text_input("Artist Name", key="browse_artist_name")
-    with col3:
-        filter_style = st.text_input("Style", key="browse_style")
-    with col4:
-        filter_date_before = st.text_input("Year Before", key="browse_year_before")
-    with col5:
-        filter_date_after = st.text_input("Year After", key="browse_year_after")
-    
-    if st.button("Search", type="primary", key="browse_search"):
-        try:
-            params = {}
-            if filter_artifact_name:
-                params["name"] = filter_artifact_name
-            if filter_artist_name:
-                params["artistName"] = filter_artist_name
-            if filter_style:
-                params["style"] = filter_style
-            if filter_date_before:
-                params["dateBefore"] = filter_date_before
-            if filter_date_after:
-                params["dateAfter"] = filter_date_after
-            res = requests.get(f"{API_BASE}/artifacts/filter", params=params)
-            if res.status_code == 200:
-                data = res.json()
-                if data:
-                    df = pd.DataFrame(data)
-
-                    cols_to_keep = ["artifactID", "name", "style", "medium", "createdYear", "artifactCondition"]
-                    df = df[cols_to_keep]
-                    
-                    df.rename(columns={
-                        "artifactID": "ID",
-                        "name": "Name",
-                        "style": "Style",
-                        "medium": "Medium",
-                        "createdYear": "Year",
-                        "artifactCondition": "Condition",
-                    })
-                    st.dataframe(df, use_container_width=True, hide_index=True)
-                else:
-                    st.info("No artifacts found.")
-            else:
-                st.error(f"Error Fetching artifacts (HTTP {res.status_code})")
-        except requests.exceptions.ConnectionError:
-            st.warning("Unable to connect to the API.")
+    artifact_explorer_tab()
 
 # ------ Tab 2: Missing Information --------------------------------------------
 with tab2:
@@ -98,7 +49,7 @@ with tab2:
 with tab3:
     st.subheader("Edit or Delete an Artifact")
 
-    artifact_id = st.number_input("Artifact ID", min_value=1, step=1)
+    artifact_id = artifact_dropdown()
 
     if st.button("Load Artifact", key="load_artifact"):
         try:

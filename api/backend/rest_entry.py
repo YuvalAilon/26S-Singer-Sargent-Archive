@@ -13,6 +13,8 @@ from backend.branches.branches_routes import branches
 from backend.galleries.galleries_routes import galleries
 from backend.artifact_groups.artifact_groups_routes import artifact_groups
 from backend.projects.projects_routes import projects
+from backend.exhibits.exhibits_routes import exhibits
+from backend.artists.artists_routes import artists
 
 from backend.db_connection import init_app as init_db
 from backend.simple.simple_routes import simple_routes
@@ -58,6 +60,8 @@ def create_app():
     app.register_blueprint(requests, url_prefix="/requests")
     app.register_blueprint(artifact_groups, url_prefix="/artifact_groups")
     app.register_blueprint(projects, url_prefix="/projects")
+    app.register_blueprint(exhibits, url_prefix="/exhibits")
+    app.register_blueprint(artists, url_prefix="/artists")
     # Add more here if required, but we've fulfilled the 4 blueprints requirement
 
     return app

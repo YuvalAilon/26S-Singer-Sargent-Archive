@@ -11,6 +11,20 @@ def get_all_artifacts():
     # Added 'return' so the data actually goes to Chrome
     return getDBQuery("SELECT * FROM Artifact", 'GET /artifacts')
 
+@artifacts.route("/style-counts", methods=["GET"])
+def get_style_counts_by_branch():
+    query = """
+        SELECT mb.branchName, ar.style, COUNT(*) AS artifactCount
+        FROM Artifact ar
+        JOIN Exhibits e ON ar.displayedInExhibitID = e.exhibitID
+        JOIN Galleries g ON e.galleryID = g.galleryID
+        JOIN MuseumBranch mb ON g.branchID = mb.branchID
+        WHERE ar.style IS NOT NULL
+        GROUP BY mb.branchName, ar.style
+        ORDER BY mb.branchName, artifactCount DESC
+    """
+    return getDBQuery(query, "GET /artifacts/style-counts")
+
 @artifacts.route("/<int:artifact_id>")
 def get_artifact(artifact_id):
     return getDBQuery(f"SELECT * FROM Artifact WHERE artifactID = {artifact_id}", 'GET /artifacts/id')
