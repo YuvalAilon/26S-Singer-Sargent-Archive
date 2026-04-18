@@ -4,6 +4,7 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 import requests
 from modules.nav import SideBarLinks
+from modules.components import *
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -32,7 +33,7 @@ with tab1:
             condition = st.selectbox("Condition", 
                                         ["pristine", "good", "fair", "poor", "requires restoration" ])
         with col2:
-            artist_id = st.number_input("Artist ID", min_value=0, value=0, step=1)
+            artist_id = artist_dropdown()
             description = st.text_area("Description")
             image_url = st.text_input("Image URL")
             exhibit_id = st.number_input("Display in Exhibit ID (0 = none)", min_value=0, value=0, step=1)
@@ -74,7 +75,8 @@ with tab2:
         col1, col2 = st.columns(2)
 
         with col1:
-            bulk_artist_id = st.number_input("Artist ID", min_value=0, value=0, step=1, key="bulk_artist")
+            bulk_artifact_id = st.number_input("Start at ID")
+            bulk_artist_id = artist_dropdown(key="bulk_artist")
             bulk_style = st.text_input("Style", key="bulk_style")
             bulk_medium = st.text_input("Medium", key="bulk_medium")
 
@@ -90,6 +92,7 @@ with tab2:
         bulk_submitted = st.form_submit_button("Bulk Add", type="primary", use_container_width=True)
 
         if bulk_submitted:
+            message = ""
             names = [n.strip() for n in artifact_names.split("\n") if n.strip()]
             if not names:
                 st.error("Enter at least one artifact name.")
@@ -97,6 +100,7 @@ with tab2:
                 success_count = 0
                 for artifact_name in names:
                     payload = {
+                        "artifactID" : bulk_artifact_id,
                         "name": artifact_name,
                         "artistID": bulk_artist_id if bulk_artist_id > 0 else None, 
                         "style": bulk_style or None,
@@ -107,15 +111,17 @@ with tab2:
                     }
                     try: 
                         res = requests.post(f"{API_BASE}/artifacts", json=payload)
+                        message += str(res.status_code) + " "
                         if res.status_code in (200, 201):
                             success_count += 1
                     except requests.exceptions.ConnectionError:
                         pass
+                    bulk_artifact_id += 1
 
                 if success_count > 0:
                     st.success(f"Added {success_count} of {len(names)} artifacts.")
                 else:
-                    st.warning("Unable to connect to the API.")
+                    st.warning("Unable to connect to the API." + message)
 
 
 

@@ -17,8 +17,27 @@ st.title("Manage Artifacts")
 
 tab1, tab2, tab3, tab4 = st.tabs(["View Sets", "View Artifacts In Set", "Create New Set", "Add / Remove Artifacts"])
 
-#------ Tab 1: View Set -------------------------------------------------------------
+#------ Tab 1: View Artifacts In Set -------------------------------------------------------------
 with tab1:
+    st.header("Artifact Sets Explorer")
+
+    selected_group_id = artifact_group_dropdown(key="explorer_set_picker")
+
+    if selected_group_id:
+        if st.button("Load Artifacts", type="primary"):
+            try:
+                res = requests.get(f"{API_BASE}/artifact_groups/{selected_group_id}/artifacts")
+                
+                if res.status_code == 200:
+                    artifacts = res.json()
+                    
+                    display_artifact_cards(artifacts)
+                else:
+                    st.error("Error: Could not retrieve artifacts for this group.")
+            except Exception as e:
+                st.error(f"Connection error: {e}")
+#------ Tab 2: View Set ----------------------------------------
+with tab2:
     st.subheader("Existing Artifact Sets")
     try:
         res = requests.get(f"{API_BASE}/artifact_groups/")
@@ -37,25 +56,7 @@ with tab1:
             st.error(f"Error fetching sets (HTTP {res.status_code})")
     except requests.exceptions.ConnectionError:
         st.warning("Unable to connect to the API.")
-#------ Tab 2: View Artifacts In Set ----------------------------------------
-with tab2:
-    st.header("Artifact Sets Explorer")
 
-    selected_group_id = artifact_group_dropdown(key="explorer_set_picker")
-
-    if selected_group_id:
-        if st.button("Load Artifacts", type="primary"):
-            try:
-                res = requests.get(f"{API_BASE}/artifact_groups/{selected_group_id}/artifacts")
-                
-                if res.status_code == 200:
-                    artifacts = res.json()
-                    
-                    display_artifact_cards(artifacts)
-                else:
-                    st.error("Error: Could not retrieve artifacts for this group.")
-            except Exception as e:
-                st.error(f"Connection error: {e}")
 #------ Tab 3: Create New Set -----------------------------------------------
 with tab3:
     st.subheader("Create a New Artifact Set")

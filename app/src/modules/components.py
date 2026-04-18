@@ -26,8 +26,64 @@ def artifact_group_dropdown(label="Select Artifact Set", key="group_selector"):
             return None
     except Exception as e:
         st.error(f"Dropdown Error: {e}")
+        return None  
+
+def artist_dropdown(label="Select Artist", key="artist_selector"):
+    """
+    Fetches all artists and displays a dropdown with their full names.
+    Returns the selected artistID.
+    """
+    try:
+        res = requests.get(f"{API_BASE}/artists/")
+        if res.status_code == 200:
+            artists = res.json()
+            if not artists:
+                st.info("No artists found.")
+                return None
+
+            artist_options = {}
+            for a in artists:
+                if "firstName" in a and "lastName" in a:
+                    full_name = f"{a['firstName']} {a['lastName']}"
+                else:
+                    full_name = a.get("name", f"Artist #{a['artistID']}")
+                
+                artist_options[full_name] = a["artistID"]
+
+            selected_name = st.selectbox(label, options=list(artist_options.keys()), key=key)
+            return artist_options[selected_name]
+        
+        st.error(f"Error: Backend returned {res.status_code}")
         return None
-    
+    except Exception as e:
+        st.error(f"Failed to load artists: {e}")
+        return None
+
+def artifact_dropdown(label="Select Artifact", key="artifact_selector"):
+    """
+    Fetches all artifacts and returns the selected artifactID.
+    """
+    try:
+        res = requests.get(f"{API_BASE}/artifacts")
+        if res.status_code == 200:
+            artifacts = res.json()
+            if not artifacts:
+                st.info("No artifacts available.")
+                return None
+
+            artifact_options = {
+                f"{a.get('name', 'Unnamed')} (ID: {a['artifactID']})": a["artifactID"] 
+                for a in artifacts
+            }
+
+            selected_label = st.selectbox(label, options=list(artifact_options.keys()), key=key)
+            return artifact_options[selected_label]
+        
+        st.error(f"Error: Backend returned {res.status_code}")
+        return None
+    except Exception as e:
+        st.error(f"Failed to load artifacts: {e}")
+        return None
 
 def display_artifact_cards(artifacts_json):
     """
@@ -48,9 +104,9 @@ def display_artifact_cards(artifacts_json):
                     try:
                         st.image(image_url, use_container_width=True)
                     except Exception:
-                        st.image("https://via.placeholder.com/300x200?text=Link+Broken", use_container_width=True)
+                        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/330px-Placeholder_view_vector.svg.png", use_container_width=True)
                 else:
-                    st.image("https://via.placeholder.com/300x200?text=No+Image+Available", use_container_width=True)
+                    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/330px-Placeholder_view_vector.svg.png", use_container_width=True)
 
             with text_col:
                 st.subheader(art.get("name", "Unnamed Artifact"))
@@ -66,3 +122,43 @@ def display_artifact_cards(artifacts_json):
                 if art.get("description"):
                     with st.expander("Read Description"):
                         st.write(art["description"])
+
+def artifact_explorer_tab():
+    st.subheader("All Artifacts")
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        filter_artifact_name = st.text_input("Artifact Name", key="browse_artifact_name")
+    with col2:
+        filter_artist_name = st.text_input("Artist Name", key="browse_artist_name")
+    with col3:
+        filter_style = st.text_input("Style", key="browse_style")
+    with col4:
+        filter_date_before = st.text_input("Year Before", key="browse_year_before")
+    with col5:
+        filter_date_after = st.text_input("Year After", key="browse_year_after")
+    
+    if st.button("Search", type="primary", key="browse_search"):
+        try:
+            params = {}
+            if filter_artifact_name:
+                params["name"] = filter_artifact_name
+            if filter_artist_name:
+                params["artistName"] = filter_artist_name
+            if filter_style:
+                params["style"] = filter_style
+            if filter_date_before:
+                params["dateBefore"] = filter_date_before
+            if filter_date_after:
+                params["dateAfter"] = filter_date_after
+            res = requests.get(f"{API_BASE}/artifacts/filter", params=params)
+            if res.status_code == 200:
+                data = res.json()
+                if data:
+                    display_artifact_cards(data)
+                else:
+                    st.info("No artifacts found.")
+            else:
+                st.error(f"Error Fetching artifacts (HTTP {res.status_code})")
+        except requests.exceptions.ConnectionError:
+            st.warning("Unable to connect to the API.")
