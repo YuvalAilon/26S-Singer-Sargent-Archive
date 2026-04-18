@@ -15,7 +15,7 @@ def get_current_exhibits():
                mb.street, mb.city, mb.zip,
                mb.contactPhone,
                e.name AS exhibit,
-               e.dateStart, e.dateEnd
+               e.dateStart, e.dateEnd, e.exhibitID
         FROM Exhibits e
         JOIN Galleries g ON e.galleryID = g.galleryID
         JOIN MuseumBranch mb ON g.branchID = mb.branchID
@@ -60,3 +60,10 @@ def get_branch_exhibit_stats():
         ORDER BY exhibitsPerMonth DESC
     """
     return getDBQuery(query, "GET /exhibits/branch-stats")
+
+# GET /exhibits/<int:exhibitID>/artifacts
+@exhibits.route("/<int:exhibitID>/artifacts", methods=["GET"])
+def get_artifacts_in_exhibit(exhibitID):
+    query = f"SELECT * FROM Artifact WHERE displayedInExhibitID = {exhibitID}"
+    
+    return getDBQuery(query, f"GET /exhibits/{exhibitID}/artifacts")

@@ -72,7 +72,7 @@ def artifact_dropdown(label="Select Artifact", key="artifact_selector"):
                 return None
 
             artifact_options = {
-                f"{a.get('name', 'Unnamed')} (ID: {a['artifactID']})": a["artifactID"] 
+                f"{a.get('name', 'Unnamed')} | {a['artifactID']}": a["artifactID"] 
                 for a in artifacts
             }
 
@@ -83,6 +83,48 @@ def artifact_dropdown(label="Select Artifact", key="artifact_selector"):
         return None
     except Exception as e:
         st.error(f"Failed to load artifacts: {e}")
+        return None
+
+def current_exhibits_dropdown(label="Select an Active Exhibit", key="exhibit_selector"):
+    """
+    Returns the exhibitID of the selected exhibit.
+    """
+    try:
+        res = requests.get(f"{API_BASE}/exhibits/current")
+        
+        if res.status_code == 200:
+            exhibits_data = res.json()
+            
+            if not exhibits_data:
+                st.info("No active exhibits found.")
+                return None
+
+            # Dictionary mapping: "Label String" -> int(ID)
+            # We assume your backend returns 'ex_id' or 'exhibitID'
+            # (Double check your Flask SQL includes the ID column!)
+            exhibit_options = {}
+            for e in exhibits_data:
+                # Fallback to a name if ID is missing for some reason
+                eid = e.get('exhibitID') 
+                display_text = f"{e['exhibit']} (@ {e['branchName']})"
+                
+                exhibit_options[display_text] = eid
+
+            selected_label = st.selectbox(
+                label, 
+                options=list(exhibit_options.keys()), 
+                key=key
+            )
+            
+            # This returns the integer ID to your app.py
+            return exhibit_options[selected_label]
+        
+        else:
+            st.error(f"Error {res.status_code} fetching exhibits.")
+            return None
+            
+    except Exception as e:
+        st.error(f"Dropdown error: {e}")
         return None
 
 def display_artifact_cards(artifacts_json):

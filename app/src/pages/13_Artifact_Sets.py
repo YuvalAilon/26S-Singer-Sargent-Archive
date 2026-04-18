@@ -94,7 +94,7 @@ with tab4:
     with col1:
         set_id = artifact_group_dropdown(key="set_picker_add_remove_artifact")
     with col2:
-        artifact_id = st.number_input("Artifact ID", min_value=1, step=1)
+        artifact_id = artifact_dropdown()
 
     col_add, col_remove = st.columns(2)
 

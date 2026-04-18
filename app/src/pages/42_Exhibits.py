@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
+from modules.components import *
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -52,3 +53,19 @@ try:
         st.error(f"Error fetching exhibits (HTTP {res.status_code})")
 except requests.exceptions.ConnectionError:
     st.warning("Unable to connect to the API.")
+
+explored_exhibit_id = current_exhibits_dropdown(label="View Artwork From")
+if explored_exhibit_id:
+        if st.button("Load Artworks", type="primary"):
+            try:
+                res = requests.get(f"{API_BASE}/exhibits/{explored_exhibit_id}/artifacts")
+                
+                if res.status_code == 200:
+                    artifacts = res.json()
+                    
+                    display_artifact_cards(artifacts)
+                else:
+                    st.error("Error: Could not retrieve artifacts for this exhibit." + explored_exhibit_id)
+            except Exception as e:
+                st.error(f"Connection error: {e}")
+
