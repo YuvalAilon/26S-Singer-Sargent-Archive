@@ -52,10 +52,10 @@ def get_branch(branchID):
 
         # Reuse the same cursor for the follow-up queries
         cursor.execute("SELECT * FROM ExpansionProject WHERE projectID = %s", (branchID,))
-        museum_branch["Artifact"] = cursor.fetchall()
+        museum_branch["ExpansionProject"] = cursor.fetchall()
 
         cursor.execute("SELECT * FROM Galleries WHERE branchID = %s", (branchID))
-        museum_branch["Roles"] = cursor.fetchall()
+        museum_branch["Galleries"] = cursor.fetchall()
 
         return jsonify(museum_branch), 200
     except Error as e:
@@ -64,23 +64,25 @@ def get_branch(branchID):
         cursor.close()
         
 # Get the exhibits being hosted at a branch
-@branches.route("/<int:branchID>", methods=["GET"])
-def get_branch_galleries(branchID):
+@branches.route("/<int:branchID>/exhibits", methods=["GET"])
+def get_branch_exhibits(branchID):
     cursor = get_db().cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM MuseumBranch WHERE branchID = %s", (branchID))
+        cursor.execute("SELECT * FROM MuseumBranch WHERE branchID = %s", (branchID,))
         museum_branch = cursor.fetchone()
 
         if not museum_branch:
             return jsonify({"error": "Museum branch not found"}), 404
 
         # Reuse the same cursor for the follow-up queries
-        cursor.execute("SELECT * FROM Artifact WHERE archivedByEmployeeID = %s", (branchID,))
-        museum_branch["Artifact"] = cursor.fetchall()
+        cursor.execute("SELECT * FROM Galleries WHERE branchID = %s", (branchID,))
+        galleries = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM Roles WHERE roleID = %s", (museum_branch["roleID"],))
-        museum_branch["Roles"] = cursor.fetchall()
+        for gallery in galleries:
+            cursor.execute("SELECT * FROM Exhibits WHERE galleryID = %s", (gallery["galleryID"],))
+            gallery["exhibits"] = cursor.fetchall()
 
+        museum_branch["galleries"] = galleries
         return jsonify(museum_branch), 200
     except Error as e:
         return jsonify({"error": str(e)}), 500
