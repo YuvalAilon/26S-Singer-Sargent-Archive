@@ -66,3 +66,35 @@ def get_branch(galleryID):
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+           
+# PUT /galleries/<gallaryID>
+@galleries.route("/<int:gallaryID>", methods=["PUT"])
+def update_gallary(galleryID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f'PUT /gallaries/{galleryID}')
+        data = request.get_json()
+
+        cursor.execute("SELECT galleryID FROM Gallaries WHERE gallaryID = %s", (galleryID,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Gallary not found"}), 404
+
+        allowed_fields = ["branchID", "isInUse", "name", "wing", "artworkCapacity"]
+        update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
+        params = [data[f] for f in allowed_fields if f in data]
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+
+        params.append(galleryID)
+        query = f"UPDATE Gallary SET {', '.join(update_fields)} WHERE gallaryID = %s"
+        cursor.execute(query, params)
+        get_db().commit()
+
+        return jsonify({"message": "Gallary updated successfully"}), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in update_gallary: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        
