@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
+from modules.components import *
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -19,36 +20,36 @@ tab1, tab2, tab3 = st.tabs(["Browse All", "Missing Information", "Edit / Delete"
 with tab1:
     st.subheader("All Artifacts")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        filter_name = st.text_input("Search by name", key="browse_name")
+        filter_artifact_name = st.text_input("Artifact Name", key="browse_artifact_name")
     with col2:
-        filter_style = st.text_input("Filter by style", key="browse_style")
+        filter_artist_name = st.text_input("Artist Name", key="browse_artist_name")
     with col3:
-        filter_medium = st.text_input("Filter by medium", key="browse_medium")
+        filter_style = st.text_input("Style", key="browse_style")
+    with col4:
+        filter_date_before = st.text_input("Year Before", key="browse_year_before")
+    with col5:
+        filter_date_after = st.text_input("Year After", key="browse_year_after")
     
     if st.button("Search", type="primary", key="browse_search"):
         try:
             params = {}
-            if filter_name:
-                params["name"] = filter_name
+            if filter_artifact_name:
+                params["name"] = filter_artifact_name
+            if filter_artist_name:
+                params["artistName"] = filter_artist_name
             if filter_style:
                 params["style"] = filter_style
-            if filter_medium:
-                params["medium"] = filter_medium
-            res = requests.get(f"{API_BASE}/artifacts", params=params)
+            if filter_date_before:
+                params["dateBefore"] = filter_date_before
+            if filter_date_after:
+                params["dateAfter"] = filter_date_after
+            res = requests.get(f"{API_BASE}/artifacts/filter", params=params)
             if res.status_code == 200:
                 data = res.json()
                 if data:
-                    df = pd.DataFrame(data).rename(columns={
-                        "artifactID": "ID",
-                        "name": "Name",
-                        "style": "Style",
-                        "medium": "Medium",
-                        "createdYear": "Year",
-                        "artifactCondition": "Condition",
-                    })
-                    st.dataframe(df, use_container_width=True, hide_index=True)
+                    display_artifact_cards(data)
                 else:
                     st.info("No artifacts found.")
             else:
@@ -62,7 +63,7 @@ with tab2:
 
     if st.button("Find Incomplete Artifacts", type="primary", key="find_missing"):
         try:
-            res = requests.get(f"{API_BASE}/artifacts", params={"missing_info": True})
+            res = requests.get(f"{API_BASE}/artifacts/missing_info")
             if res.status_code == 200:
                 data = res.json()
                 if data:
@@ -135,7 +136,13 @@ with tab3:
             if save:
                 payload = {
                     "name": edit_name,
+                    "description": edit_description,
                     "condition": edit_condition,
+                    "medium": edit_medium,
+                    "imageURL": edit_image,
+                    "createdYear" : edit_year,
+                    "style": edit_style,
+
                 }
                 try:
                     res = requests.put(f"{API_BASE}/artifacts/{artifact_id}", json=payload)

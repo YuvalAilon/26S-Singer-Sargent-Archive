@@ -1,11 +1,17 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 from backend.db_connection import get_db
 from backend.db_connection import getDBQuery
+from mysql.connector import Error
 
 requests = Blueprint("requests", __name__)
 
-@requests.route("/<int:artifact_id>", methods=["GET"])
-def get_all_requests(artifact_id):
+#GET /requests
+@requests.route("", methods=["GET"])
+def get_all_requests():
+    return getDBQuery("SELECT * FROM ArtifactRequest", 'GET ')
+
+@requests.route("/<int:request_id>", methods=["GET"])
+def get_request_by_id(artifact_id):
     return getDBQuery("SELECT * FROM ArtifactRequest WHERE requestID = " + str(artifact_id) , 'GET /<int:artifact_id>')
 
 @requests.route("/future-returns", methods=["GET"])
@@ -26,11 +32,36 @@ def get_by_exhibit(exhibit_id):
         "GET /by-exhibit/<int:exhibit_id>"
     )
 
-
-#GET /requests
-
 #POST /requests
 
 #PUT /requests
+@requests.route("/<int:request_id>", methods=["PUT"])
+def update_donor(request_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        data = request.get_json()
+
+        cursor.execute("SELECT * FROM ArtifactRequest WHERE requestID = %s", (request_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Request not found"}), 404
+
+        # Build update query dynamically based on provided fields
+        allowed_fields = ["loanDateStart", "loanDateEnd", "status"]
+        update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
+        params = [data[f] for f in allowed_fields if f in data]
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+
+        params.append(request_id)
+        query = f"UPDATE ArtifactRequest SET {', '.join(update_fields)} WHERE requestID = %s"
+        cursor.execute(query, params)
+        get_db().commit()
+
+        return jsonify({"message": "Artifact request updated successfully"}), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 
 #DELETE /requests

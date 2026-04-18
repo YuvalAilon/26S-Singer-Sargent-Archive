@@ -78,6 +78,7 @@ def filter_artifacts_advanced():
         query += f" AND a.displayedInExhibitID = {exhibit_id}"
 
     return getDBQuery(query, f"GET /artifacts/filter with advanced params")
+
 @artifacts.route("/<int:artifactID>/artifact_groups", methods=["GET"])
 def get_artifact_groups(artifactID):
     query = """
@@ -102,6 +103,24 @@ def get_artifact_worker(artifact_id):
 def get_artifact_exhibit(artifact_id):
     query = f"SELECT * from Exhibits WHERE exhibitID = (SELECT displayedInExhibitID FROM Artifact WHERE artifactID = {artifact_id});"
     return getDBQuery(query, "GET /artifacts/id/exhibit")
+
+@artifacts.route("/missing_info", methods=["GET"])
+def get_artifacts_missing_info():
+    
+        # This query looks for ANY row where at least one of these key columns is NULL
+    query = """
+            SELECT * FROM Artifact 
+            WHERE (
+                (artistID IS NULL) + 
+                (description IS NULL) + 
+                (style IS NULL) + 
+                (createdYear IS NULL) + 
+                (medium IS NULL) + 
+                (artifactCondition IS NULL) +
+                (imageURL IS NULL)
+            ) >= 2
+        """
+    return getDBQuery(query, "GET /artifacts/missing_info")
 
 @artifacts.route("/", methods=["POST"])
 def create_artifact():
@@ -227,7 +246,13 @@ def update_artifact_general(artifactID):
             "exhibitID": "displayedInExhibitID",
             "employeeID": "archivedByEmployeeID",
             "name": "name",
-            "condition": "artifactCondition"
+            "style": "style",
+            "condition" : "artifactCondition",
+            "description": "description",
+            "medium": "medium",
+            "imageURL": "imageURL",
+            "createdYear" : "createdYear",
+            "style": "style",
         }
 
         update_parts = []
