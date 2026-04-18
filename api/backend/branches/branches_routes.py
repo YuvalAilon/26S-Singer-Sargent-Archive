@@ -44,17 +44,16 @@ def get_all_branches():
 def get_branch(branchID):
     cursor = get_db().cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM MuseumBranch WHERE branchID = %s", (branchID))
+        cursor.execute("SELECT * FROM MuseumBranch WHERE branchID = %s", (branchID,))
         museum_branch = cursor.fetchone()
 
         if not museum_branch:
             return jsonify({"error": "Museum branch not found"}), 404
 
-        # Reuse the same cursor for the follow-up queries
-        cursor.execute("SELECT * FROM ExpansionProject WHERE projectID = %s", (branchID,))
+        cursor.execute("SELECT * FROM ExpansionProject WHERE headedByBranchID = %s", (branchID,))
         museum_branch["ExpansionProject"] = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM Galleries WHERE branchID = %s", (branchID))
+        cursor.execute("SELECT * FROM Galleries WHERE branchID = %s", (branchID,))
         museum_branch["Galleries"] = cursor.fetchall()
 
         return jsonify(museum_branch), 200
