@@ -169,7 +169,7 @@ def get_artifact_donations_by_donor(donor_id):
         current_app.logger.info('GET /donors/donations')
 
         query = """
-SELECT contactFirstName, contactLastName, Artifact.name as artifactName, loanDateStart, loanDateEnd
+SELECT contactFirstName, contactLastName, Artifact.name as artifactName, loanDateStart, loanDateEnd, Artifact.ArtifactID, ArtifactRequest.RequestID
 FROM Donors
 JOIN ArtifactRequest ON Donors.donorID = ArtifactRequest.loaningDonorID
 JOIN ArtifactRequestRelations ON ArtifactRequest.requestID = ArtifactRequestRelations.requestID
@@ -252,5 +252,33 @@ def create_ngo():
     finally:
         cursor.close()
 #PUT /donors
+@donors.route("/<int:donor_id>", methods=["PUT"])
+def update_donor(donor_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        data = request.get_json()
+
+        cursor.execute("SELECT * FROM Donors WHERE DonorID = %s", (donor_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "NGO not found"}), 404
+
+        # Build update query dynamically based on provided fields
+        allowed_fields = ["organizationName", "email", "contactTitle", "contactFirstName", "contactMiddleName", "contactLastName", "street", "city", "zip"]
+        update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
+        params = [data[f] for f in allowed_fields if f in data]
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+
+        params.append(donor_id)
+        query = f"UPDATE Donors SET {', '.join(update_fields)} WHERE DonorID = %s"
+        cursor.execute(query, params)
+        get_db().commit()
+
+        return jsonify({"message": "Donor updated successfully"}), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 
 # No DELETE for donors
