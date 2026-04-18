@@ -34,7 +34,7 @@ def get_all_branches():
         current_app.logger.info(f'Retrieved {len(branches)} museum branches')
         return jsonify(branches), 200
     except Error as e:
-        current_app.logger.error(f'Database error in get_all_ngos: {e}')
+        current_app.logger.error(f'Database error in get_all_branches: {e}')
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
@@ -42,6 +42,30 @@ def get_all_branches():
 # Get detailed information about a specific branch
 @branches.route("/<int:branchID>", methods=["GET"])
 def get_branch(branchID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT * FROM MuseumBranch WHERE branchID = %s", (branchID))
+        museum_branch = cursor.fetchone()
+
+        if not museum_branch:
+            return jsonify({"error": "Museum branch not found"}), 404
+
+        # Reuse the same cursor for the follow-up queries
+        cursor.execute("SELECT * FROM ExpansionProject WHERE projectID = %s", (branchID,))
+        museum_branch["Artifact"] = cursor.fetchall()
+
+        cursor.execute("SELECT * FROM Galleries WHERE branchID = %s", (branchID))
+        museum_branch["Roles"] = cursor.fetchall()
+
+        return jsonify(museum_branch), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        
+# Get the exhibits being hosted at a branch
+@branches.route("/<int:branchID>", methods=["GET"])
+def get_branch_galleries(branchID):
     cursor = get_db().cursor(dictionary=True)
     try:
         cursor.execute("SELECT * FROM MuseumBranch WHERE branchID = %s", (branchID))
