@@ -162,18 +162,21 @@ WHERE D.donorID = %s
         cursor.close()
 
 # Getting all individual donations
-@donors.route("/<int:donor_id>/donations/monetary", methods=["GET"])
+@donors.route("/<int:donor_id>/donations/artifact", methods=["GET"])
 def get_artifact_donations_by_donor(donor_id):
     cursor = get_db().cursor(dictionary=True)
     try:
         current_app.logger.info('GET /donors/donations')
 
         query = """
-SELECT contactFirstName, contactLastName, amount, reason
-FROM MonetaryDonation
-JOIN `Singer-Sargent-Archive`.Donors D ON MonetaryDonation.donorID = D.donorID
-WHERE D.donorID = %s
-"""
+SELECT contactFirstName, contactLastName, Artifact.name as artifactName, loanDateStart, loanDateEnd
+FROM Donors
+JOIN ArtifactRequest ON Donors.donorID = ArtifactRequest.loaningDonorID
+JOIN ArtifactRequestRelations ON ArtifactRequest.requestID = ArtifactRequestRelations.requestID
+JOIN Artifact ON ArtifactRequestRelations.artifactID = Artifact.artifactID
+WHERE Donors.donorID = %s
+ORDER BY contactFirstName, contactLastName, loanDateEnd;
+        """
         cursor.execute(query, (donor_id,))
         donations = cursor.fetchall()
 
