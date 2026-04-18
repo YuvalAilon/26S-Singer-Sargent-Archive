@@ -63,6 +63,37 @@ def get_branch(branchID):
     finally:
         cursor.close()
         
+# PUT /branches/<branchID>
+@branches.route("/<int:branchID>", methods=["PUT"])
+def update_branch(branchID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f'PUT /branches/{branchID}')
+        data = request.get_json()
+
+        cursor.execute("SELECT branchID FROM MuseumBranch WHERE branchID = %s", (branchID,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Branch not found"}), 404
+
+        allowed_fields = ["branchName", "contactName", "contactPhone", "contactEmail", "street", "city", "state", "zip"]
+        update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
+        params = [data[f] for f in allowed_fields if f in data]
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+
+        params.append(branchID)
+        query = f"UPDATE MuseumBranch SET {', '.join(update_fields)} WHERE branchID = %s"
+        cursor.execute(query, params)
+        get_db().commit()
+
+        return jsonify({"message": "Branch updated successfully"}), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in update_branch: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()       
+
 # Get the exhibits being hosted at a branch
 @branches.route("/<int:branchID>/exhibits", methods=["GET"])
 def get_branch_exhibits(branchID):
