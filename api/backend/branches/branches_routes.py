@@ -63,6 +63,43 @@ def get_branch(branchID):
     finally:
         cursor.close()
         
+# POST /branches
+@branches.route("/", methods=["POST"])
+def create_branch():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info('POST /branches')
+        data = request.get_json()
+
+        required_fields = ["branchName", "contactName", "contactPhone", "contactEmail", "street", "city", "state", "zip"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        query = """
+            INSERT INTO Branches (branchName, contactName, contactPhone, contactEmail, street, city, state, zip)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        
+        cursor.execute(query, (
+            data["branchName"],
+            data["contactName"],
+            data["contactPhone"],
+            data["contactEmail"],
+            data["street"],
+            data["city"],
+            data["state"],
+            data["zip"]
+        ))
+        
+        get_db().commit()
+        return jsonify({"message": "Branch created successfully", "branchID": cursor.lastrowid}), 201
+    except Error as e:
+        current_app.logger.error(f'Database error in create_branch: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        
 # PUT /branches/<branchID>
 @branches.route("/<int:branchID>", methods=["PUT"])
 def update_branch(branchID):
