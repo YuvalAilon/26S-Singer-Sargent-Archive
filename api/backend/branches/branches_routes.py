@@ -129,6 +129,27 @@ def update_branch(branchID):
         current_app.logger.error(f'Database error in update_branch: {e}')
         return jsonify({"error": str(e)}), 500
     finally:
+        cursor.close()
+        
+#DELETE /branches
+@branches.route("/<int:branchID>", methods=["DELETE"])
+def delete_branch(branchID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f'DELETE /branch/{branchID}')
+
+        cursor.execute("SELECT branchID FROM Branches WHERE branchID = %s", (branchID,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Branch not found"}), 404
+
+        cursor.execute("DELETE FROM Branches WHERE branchID = %s", (branchID,))
+        get_db().commit()
+
+        return jsonify({"message": "Branch deleted successfully"}), 200
+    except Error as e:
+        current_app.logger.error(f'Database error in delete_branch: {e}')
+        return jsonify({"error": str(e)}), 500
+    finally:
         cursor.close()       
 
 # Get the exhibits being hosted at a branch
