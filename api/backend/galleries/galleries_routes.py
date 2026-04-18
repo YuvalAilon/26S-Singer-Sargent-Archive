@@ -46,3 +46,23 @@ def get_all_galleries():
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+        
+# Get detailed information about a specific gallery
+@galleries.route("/<int:galleryID>", methods=["GET"])
+def get_branch(galleryID):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT * FROM Galleries WHERE galleryID = %s", (galleryID,))
+        gallery = cursor.fetchone()
+
+        if not gallery:
+            return jsonify({"error": "Museum branch not found"}), 404
+
+        cursor.execute("SELECT * FROM Exhibits WHERE galleryID = %s", (galleryID,))
+        gallery["Exhibits"] = cursor.fetchall()
+
+        return jsonify(gallery), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
