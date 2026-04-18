@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from backend.db_connection import get_db
+from backend.db_connection import getDBQuery
 from mysql.connector import Error
 
 galleries = Blueprint("galleries", __name__)
@@ -44,13 +45,13 @@ def get_all_galleries():
         cursor.close()
         
 #Get galleries not in use
-@galleries.route("/", methods=["GET"])
+@galleries.route("/not-in-use", methods=["GET"])
 def get_available_galleries():
     cursor = get_db().cursor(dictionary=True)
     try:
         current_app.logger.info("GET /Galleries")
         
-        cursor.execute("SELECT * FROM Galleries INNER JOIN Exhibits ON Exhibits.galleryID = Gallery.galleryID")
+        return getDBQuery("SELECT * FROM Galleries WHERE galleryID NOT IN (SELECT g.galleryID FROM Galleries g JOIN Exhibits ON Exhibits.galleryID = g.galleryID)", "GET /Galleries")
         
     except Error as e:
         current_app.logger.error(f'Database error in get_all_galleries: {e}')
