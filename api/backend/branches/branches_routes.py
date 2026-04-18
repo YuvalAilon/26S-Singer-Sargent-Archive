@@ -76,7 +76,7 @@ def create_branch():
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
         query = """
-            INSERT INTO Branches (branchName, contactName, contactPhone, contactEmail, street, city, state, zip)
+            INSERT INTO MuseumBranch (branchName, contactName, contactPhone, contactEmail, street, city, state, zip)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         
@@ -137,11 +137,11 @@ def delete_branch(branchID):
     try:
         current_app.logger.info(f'DELETE /branch/{branchID}')
 
-        cursor.execute("SELECT branchID FROM Branches WHERE branchID = %s", (branchID,))
+        cursor.execute("SELECT branchID FROM MuseumBranch WHERE branchID = %s", (branchID,))
         if not cursor.fetchone():
             return jsonify({"error": "Branch not found"}), 404
 
-        cursor.execute("DELETE FROM Branches WHERE branchID = %s", (branchID,))
+        cursor.execute("DELETE FROM MuseumBranch WHERE branchID = %s", (branchID,))
         get_db().commit()
 
         return jsonify({"message": "Branch deleted successfully"}), 200
