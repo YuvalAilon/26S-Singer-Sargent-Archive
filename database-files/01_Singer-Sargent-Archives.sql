@@ -72,7 +72,7 @@ CREATE TABLE Donors(
 );
 
 CREATE TABLE ArtifactRequest(
-    requestID int PRIMARY KEY ,
+    requestID int PRIMARY KEY AUTO_INCREMENT,
     exhibitID int,
     loaningDonorID int,
     requestingEmployeeID int NOT NULL ,
