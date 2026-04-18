@@ -15,7 +15,7 @@ def get_all_galleries():
         wing = request.args.get("wing")
         name = request.args.get("name")
         is_in_use = request.args("isInUse")
-        artwork_capacity = request.args("artworkCapacity")
+        artwork_capacity = request.args.get("artworkCapacity")
         
         query = "SELECT * FROM Galleries WHERE 1=1"
         params = []
@@ -67,7 +67,7 @@ def get_branch(galleryID):
     finally:
         cursor.close()
            
-# PUT /galleries/<gallaryID>
+# PUT /galleries/<galleryID>
 @galleries.route("/<int:galleryID>", methods=["PUT"])
 def update_gallery(galleryID):
     cursor = get_db().cursor(dictionary=True)
@@ -75,7 +75,7 @@ def update_gallery(galleryID):
         current_app.logger.info(f'PUT /gallaries/{galleryID}')
         data = request.get_json()
 
-        cursor.execute("SELECT galleryID FROM Gallaries WHERE galleryID = %s", (galleryID,))
+        cursor.execute("SELECT galleryID FROM Galleries WHERE galleryID = %s", (galleryID,))
         if not cursor.fetchone():
             return jsonify({"error": "Gallery not found"}), 404
 
