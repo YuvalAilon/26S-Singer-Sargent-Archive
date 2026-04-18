@@ -57,7 +57,7 @@ CREATE TABLE Exhibits(
 );
 
 CREATE TABLE Donors(
-    donorID int PRIMARY KEY,
+    donorID int PRIMARY KEY AUTO_INCREMENT,
     organizationName varchar(100),
     email varchar(50),
 
@@ -148,10 +148,10 @@ CREATE TABLE ArtifactRequestRelations(
 );
 
 CREATE TABLE MonetaryDonation(
-    monetaryDonationID int PRIMARY KEY,
+    monetaryDonationID int PRIMARY KEY AUTO_INCREMENT,
     amount int,
     reason text,
-    donorID int NOT NULL ,
+    donorID int NOT NULL,
     branchID int,
     FOREIGN KEY (donorID) REFERENCES Donors (donorID),
     FOREIGN KEY (branchID) REFERENCES MuseumBranch (branchID)
