@@ -19,17 +19,21 @@ tab1, tab2 = st.tabs(["Search Collection", "Artifact Locations"])
 with tab1:
     st.subheader("Filter by Artist, Style, Medium, and More")
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        filter_name = st.text_input("Artifact Name")
-        filter_artist = st.text_input("Artist Name")
-    with col2:
-        filter_style = st.text_input("Style")
-        filter_condition = st.selectbox("Condition",
-                                         ["Any", "pristine", "good", "fair", "poor", "requires restoration"])
-    with col3:
-        filter_date_after = st.number_input("Year After", min_value=0, max_value=2026, value=0, step=1)
-        filter_date_before = st.number_input("Year Before", min_value=0, max_value=2026, value=2026, step=1)
+    with st.expander("Search Filters", expanded=True):
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            filter_name = st.text_input("Artifact Name")
+            filter_artist = st.text_input("Artist Name")
+        with col2:
+            filter_style = st.selectbox("Style",
+                                         ["Any", "realism", "Impressionism", "rococo",
+                                          "pop art", "renaissance", "Postmodernism"])
+            filter_condition = st.selectbox("Condition",
+                                             ["Any", "pristine", "good", "fair",
+                                              "poor", "requires restoration"])
+        with col3:
+            filter_date_after = st.number_input("Year After", min_value=0, max_value=2026, value=0, step=1)
+            filter_date_before = st.number_input("Year Before", min_value=0, max_value=2026, value=2026, step=1)
 
     if st.button("Search", type="primary"):
         try:
@@ -38,7 +42,7 @@ with tab1:
                 params["name"] = filter_name
             if filter_artist:
                 params["artistName"] = filter_artist
-            if filter_style:
+            if filter_style != "Any":
                 params["style"] = filter_style
             if filter_condition != "Any":
                 params["condition"] = filter_condition
@@ -51,22 +55,22 @@ with tab1:
             if res.status_code == 200:
                 data = res.json()
                 if data:
-                    df = pd.DataFrame(data).rename(columns={
-                        "artifactID": "ID",
-                        "name": "Artifact",
-                        "style": "Style",
-                        "medium": "Medium",
-                        "createdYear": "Year",
-                        "artifactCondition": "Condition",
-                        "firstName": "Artist First",
-                        "lastName": "Artist Last",
-                        "displayedInExhibitID": "Exhibit ID",
-                    })
-                    display_cols = [c for c in ["ID", "Artifact", "Artist First", "Artist Last",
-                                                 "Style", "Medium", "Year", "Condition", "Exhibit ID"]
-                                    if c in df.columns]
                     st.write(f"**{len(data)} artifact(s) found**")
-                    st.dataframe(df[display_cols], use_container_width=True, hide_index=True)
+                    for item in data:
+                        with st.expander(f"{item.get('name', 'Untitled')} ({item.get('createdYear', 'N/A')})"):
+                            col_img, col_info = st.columns([1, 2])
+                            with col_img:
+                                if item.get('imageURL'):
+                                    st.image(item['imageURL'], use_container_width=True)
+                                else:
+                                    st.write("*No image available*")
+                            with col_info:
+                                st.write(f"*Artist:* {item.get('firstName', '')} {item.get('lastName', 'Unknown')}")
+                                st.write(f"*Style:* {item.get('style', 'N/A')}")
+                                st.write(f"*Medium:* {item.get('medium', 'N/A')}")
+                                st.write(f"*Year:* {item.get('createdYear', 'N/A')}")
+                                st.write(f"*Condition:* {item.get('artifactCondition', 'N/A')}")
+                                st.write(f"*Exhibit ID:* {item.get('displayedInExhibitID', 'N/A')}")
                 else:
                     st.info("No artifacts found matching your criteria.")
             else:
@@ -82,14 +86,24 @@ with tab2:
         if res.status_code == 200:
             data = res.json()
             if data:
-                df = pd.DataFrame(data).rename(columns={
-                    "artifactID": "ID",
-                    "name": "Artifact",
-                    "displayedInExhibitID": "Exhibit ID",
-                    "artifactCondition": "Condition",
-                })
-                display_cols = [c for c in ["ID", "Artifact", "Exhibit ID", "Condition"] if c in df.columns]
-                st.dataframe(df[display_cols], use_container_width=True, hide_index=True)
+                for item in data:
+                    exhibit_text = f"Exhibit {item.get('displayedInExhibitID', 'N/A')}" if item.get('displayedInExhibitID') else "Not on display"
+                    with st.expander(f"{item.get('name', 'Untitled')} — {exhibit_text}"):
+                        col_img, col_info = st.columns([1, 2])
+                        with col_img:
+                            if item.get('imageURL'):
+                                st.image(item['imageURL'], use_container_width=True)
+                            else:
+                                st.write("*No image available*")
+                        with col_info:
+                            st.write(f"*Condition:* {item.get('artifactCondition', 'N/A')}")
+                            st.write(f"*Medium:* {item.get('medium', 'N/A')}")
+                            st.write(f"*Style:* {item.get('style', 'N/A')}")
+                            st.write(f"*Year:* {item.get('createdYear', 'N/A')}")
+                            if item.get('displayedInExhibitID'):
+                                st.write(f"**Exhibit ID:** {item.get('displayedInExhibitID')}")
+                            else:
+                                st.write("*Status:* Not currently on display")
             else:
                 st.info("No artifacts found.")
         else:
