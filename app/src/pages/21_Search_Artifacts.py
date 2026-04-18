@@ -55,10 +55,15 @@ if st.button("Search", type="primary"):
                     st.divider()
                     col_img, col_info = st.columns([1, 2])
                     with col_img:
-                        if item.get('imageURL'):
-                            st.image(item['imageURL'], use_container_width=True)
+                        image_url = item.get('imageURL')
+                        if image_url and isinstance(image_url, str) and image_url.startswith(("http://", "https://")):
+                            try:
+                                st.image(image_url, use_container_width=True)
+                            except Exception:
+                                st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/330px-Placeholder_view_vector.svg.png", use_container_width=True)
                         else:
-                            st.write("*No image available*")
+                            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/330px-Placeholder_view_vector.svg.png", use_container_width=True)
+
                     with col_info:
                         st.write(f"### {item.get('name', 'Untitled')}")
                         st.write(f"*Artist:* {item.get('firstName', '')} {item.get('lastName', 'Unknown')}")
