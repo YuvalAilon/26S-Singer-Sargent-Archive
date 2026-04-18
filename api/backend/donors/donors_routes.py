@@ -260,7 +260,7 @@ def update_donor(donor_id):
 
         cursor.execute("SELECT * FROM Donors WHERE DonorID = %s", (donor_id,))
         if not cursor.fetchone():
-            return jsonify({"error": "NGO not found"}), 404
+            return jsonify({"error": "Donor not found"}), 404
 
         # Build update query dynamically based on provided fields
         allowed_fields = ["organizationName", "email", "contactTitle", "contactFirstName", "contactMiddleName", "contactLastName", "street", "city", "zip"]
