@@ -46,6 +46,53 @@ def get_by_exhibit(exhibit_id):
     )
 
 #POST /requests
+@requests.route("", methods=["POST"])
+def add_donor():
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        data = request.get_json()
+
+        required_fields = ["exhibitID", "loaningDonorID", "requestingEmployeeID", "loanDateStart", "loanDateEnd", "status", "artifactIDs"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Initial loop to ensure data is valid
+        for artifactID in data["artifactIDs"]:
+            cursor.execute("SELECT * FROM Artifact WHERE artifactID = %s", (artifactID,))
+            if not cursor.fetchone():
+                return jsonify({"error": f"Invalid artifact id {artifactID}"}), 404
+
+
+        query = """
+            INSERT INTO ArtifactRequest (exhibitID, loaningDonorID, requestingEmployeeID, loanDateStart, loanDateEnd, status)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(query, (
+			data["exhibitID"],
+			data["loaningDonorID"],
+			data["requestingEmployeeID"],
+			data["loanDateStart"],
+			data["loanDateEnd"],
+			data["status"],
+            ))
+
+        requestID = cursor.lastrowid
+
+        print(len(data["artifactIDs"]))
+        insertQuery = "INSERT INTO ArtifactRequestRelations (requestID, artifactID) VALUES"
+        for artifactID in data["artifactIDs"]:
+            insertQuery += f" ({requestID}, {artifactID}),"
+        insertQuery = insertQuery[:-1]
+        print(insertQuery)
+        cursor.execute(insertQuery)
+
+        get_db().commit()
+        return jsonify({"message": "Request entered successfully", "requestID": requestID}), 201
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 
 #PUT /requests
 @requests.route("/<int:request_id>", methods=["PUT"])
