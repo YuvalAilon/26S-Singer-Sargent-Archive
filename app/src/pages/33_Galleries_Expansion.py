@@ -45,25 +45,25 @@ with tab1:
     st.divider()
 
     # 3.7.2 – Update gallery status
-    st.subheader("Update Gallery Status")
-    with st.form("update_gallery_form"):
-        gallery_id = st.number_input("Gallery ID", min_value=1, step=1)
-        new_status = st.selectbox("Set In Use", [True, False])
-        submitted = st.form_submit_button("Update Status")
-        if submitted:
-            try:
-                res = requests.put(
-                    f"{API_BASE}/galleries/{gallery_id}",
-                    json={"isInUse": new_status},
-                )
-                if res.status_code == 200:
-                    st.success("Gallery status updated.")
-                else:
-                    st.error(f"Error updating gallery (HTTP {res.status_code})")
-            except requests.exceptions.ConnectionError:
-                st.warning("Unable to connect to the API.")
+    # st.subheader("Update Gallery Status")
+    # with st.form("update_gallery_form"):
+    #     gallery_id = st.number_input("Gallery ID", min_value=1, step=1)
+    #     new_status = st.selectbox("Set In Use", [True, False])
+    #     submitted = st.form_submit_button("Update Status")
+    #     if submitted:
+    #         try:
+    #             res = requests.put(
+    #                 f"{API_BASE}/galleries/{gallery_id}",
+    #                 json={"isInUse": new_status},
+    #             )
+    #             if res.status_code == 200:
+    #                 st.success("Gallery status updated.")
+    #             else:
+    #                 st.error(f"Error updating gallery (HTTP {res.status_code})")
+    #         except requests.exceptions.ConnectionError:
+    #             st.warning("Unable to connect to the API.")
 
-    st.divider()
+    # st.divider()
 
     # 3.7.6 – Add a new gallery
     st.subheader("Add New Gallery")
@@ -198,6 +198,8 @@ with tab2:
                 )
                 if res.status_code == 200:
                     st.success("Project status updated.")
+                    time.sleep(1)
+                    st.rerun()
                 else:
                     st.error(f"Error updating project (HTTP {res.status_code})")
             except requests.exceptions.ConnectionError:
