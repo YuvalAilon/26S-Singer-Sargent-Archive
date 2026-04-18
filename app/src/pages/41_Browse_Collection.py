@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from modules.nav import SideBarLinks
+from modules.components import * 
 
 st.set_page_config(layout='wide')
 SideBarLinks()
@@ -33,20 +34,17 @@ BASE_RENAME = {
 }
 
 
-def render_table(data, preferred_order):
+def render_table(data):
     if not data:
         st.info("No artifacts matched.")
         return
-    df = pd.DataFrame(data).rename(columns=BASE_RENAME)
-    ordered = [c for c in preferred_order if c in df.columns]
-    extras = [c for c in df.columns if c not in ordered]
-    df = df[ordered + extras]
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    display_artifact_cards(data)
+    
 
 
 # ---- Tab 1: All Artifacts (4.1) ----------------------------------------------
 with tab1:
-    st.subheader("All Artifacts (sorted by year)")
+    st.subheader("The Museum's Complete Collection")
     try:
         res = requests.get(f"{API_BASE}/artifacts/filter")
         if res.status_code == 200:
@@ -57,7 +55,6 @@ with tab1:
                     df = df.sort_values("createdYear", na_position="last")
                 render_table(
                     df.to_dict(orient="records"),
-                    ["Artwork", "Year", "Artist First", "Artist Last", "Style", "Medium"],
                 )
             else:
                 st.info("No artifacts found.")
@@ -78,9 +75,7 @@ with tab2:
             )
             if res.status_code == 200:
                 render_table(
-                    res.json(),
-                    ["Artwork", "Year", "Artist First", "Artist Last", "Style", "Medium", "Condition"],
-                )
+                    res.json())
             else:
                 st.error(f"Error searching artifacts (HTTP {res.status_code})")
         except requests.exceptions.ConnectionError:
@@ -118,8 +113,6 @@ with tab3:
             if res.status_code == 200:
                 render_table(
                     res.json(),
-                    ["Artwork", "Year", "Style", "Medium", "Condition",
-                     "Artist First", "Artist Last", "Archivist"],
                 )
             else:
                 st.error(f"Error fetching artifacts (HTTP {res.status_code})")
