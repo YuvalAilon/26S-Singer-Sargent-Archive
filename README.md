@@ -4,6 +4,8 @@ The Singer-Sargent archives is a data driven application that aims to help museu
 
 It is built with a MySQL & Flask backend and a Streamlit frontend.
 
+[Demo Video](https://youtu.be/gWvkZsjE2hQ)
+
 Made with ♥ by Yuval Ailon, Doruk Akalin, Joel Guerra, Austin Lok, and Cooper Tarbuck
 
 # Quickstart: Running the Project
