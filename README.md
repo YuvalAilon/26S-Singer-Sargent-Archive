@@ -1,5 +1,11 @@
 # The Singer Sargent Archives - CS 3200 Final Project
 
+The Singer-Sargent archives is a data driven application that aims to help museums keep track of their collections. 
+
+It is built with a MySQL & Flask backend and a Streamlit frontend.
+
+Made with ♥ by Yuval Ailon, Doruk Akalin, Joel Guerra, Austin Lok, and Cooper Tarbuck
+
 # Quickstart: Running the Project
 ## Setting Up the .env File
 In your api directory set up a `.env` file with the following variables.
@@ -29,6 +35,17 @@ The curator is responsible for creating new exhibits, and must know what loans a
 They handle loans, and have poweful filters for both artifacts and galleries, to find the perfect space for the perfect artworks.
 
 ## Director
+The Director is responsible for handling donors, gallery expansions, and unpcoming returns.
+
+They can see how how much individual donors have donated and their contact information, in order to send thank you letters and invitations to galas.
+
+They can also create new expansion projects, and approve or deny existing ones.
+
 ## Researcher
+The researcher does not work at the museum, but instead wants to use powerful search tools on the museum's collection.
+
+They can search the collection by various filters (like artist name, style, and year of an artwork) as well as browse exhibits.
+
+They also have access to museum stats, such as the amount of different styles of work each branch has, and the rate at which it rotates exhibits.
+
 ---
-Made with ♥ by Yuval Ailon, Doruk Akalin, Joel Guerra, Austin Lok, and Cooper Tarbuck 
