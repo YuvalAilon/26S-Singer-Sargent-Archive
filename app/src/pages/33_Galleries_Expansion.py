@@ -185,7 +185,7 @@ with tab2:
     # 3.7.5 – Update expansion project status
     st.subheader("Update Project Status")
     with st.form("update_project_form"):
-        upd_proj_id = st.number_input("Project ID", min_value=1, step=1, key="upd_proj_id")
+        upd_proj_id = st.number_input("Project ID", min_value=0, step=1, key="upd_proj_id")
         upd_status = st.selectbox(
             "New Status", ["pending", "approved", "denied", "ongoing"], key="upd_status"
         )
