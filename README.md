@@ -17,7 +17,14 @@ The Streamlit website can be accessed by going to the port that the `web-app` co
 
 # Roles Overview
 ## Archivist
+The Archivist is responsible for adding newly aquired artifacts to the collection, updating current entries in the database, and removing old entries from the database.
+
+For better organization, the archivist can add similar artifacts (like multiple clothes in a fashion line, or a set of prints) to an artifact set.
+
+To ensure the museum's collection has high quality data, an archivist can look up all pieces that have two or more fields missing, so that they can be filled in.
+
 ## Curator
+
 ## Director
 ## Researcher
 ---
