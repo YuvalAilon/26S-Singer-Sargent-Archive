@@ -24,6 +24,9 @@ For better organization, the archivist can add similar artifacts (like multiple 
 To ensure the museum's collection has high quality data, an archivist can look up all pieces that have two or more fields missing, so that they can be filled in.
 
 ## Curator
+The curator is responsible for creating new exhibits, and must know what loans are currently ongoing and what galleries are free to host their exhibits.
+
+They handle loans, and have poweful filters for both artifacts and galleries, to find the perfect space for the perfect artworks.
 
 ## Director
 ## Researcher
